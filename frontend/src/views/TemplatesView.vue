@@ -29,7 +29,7 @@ const addNewTemplate = () => {
 </script>
 
 <template>
-  <div class="flex h-28 w-full justify-between items-center">
+  <div class="flex w-full justify-between items-center">
     <h2 class="text-4xl font-medium mt-2.5 mb-10">Your Templates</h2>
     <button>
       <!-- <RouterLink> -->
@@ -41,9 +41,11 @@ const addNewTemplate = () => {
   <div
     v-for="template in templates"
     :key="template.id"
-    class="mb-6 p-4 bg-zinc-950 text-zinc-50 rounded-lg w-full"
+    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6 p-4 w-full"
   >
-    <div class="flex flex-col items-center">
+    <div
+      class="flex flex-col items-center bg-zinc-950 text-zinc-50 rounded-lg py-14"
+    >
       <p class="font-semibold text-lg">{{ template.templateName }}</p>
       <p class="text-zinc-400">{{ template.templateNote }}</p>
       <p class="text-zinc-400">{{ template.dateCreated }}</p>

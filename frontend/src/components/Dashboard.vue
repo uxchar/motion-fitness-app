@@ -53,7 +53,10 @@ onMounted(() => {
     </div>
   </div>
   <h2 class="mt-32 mb-4">Your Workout History</h2>
-  <div v-if="workouts.length">
+  <div
+    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full"
+    v-if="workouts.length"
+  >
     <!-- Loop through each workout -->
     <div
       v-for="workout in workouts"
@@ -74,7 +77,7 @@ onMounted(() => {
 
       <!-- Loop through each exercise -->
       <div
-        class="mb-3"
+        class="mb-4"
         v-for="exercise in workout.exercises"
         :key="exercise.exercise_name"
       >

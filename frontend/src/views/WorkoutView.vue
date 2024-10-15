@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import { useWorkoutStore } from "@/stores/workoutStore";
+import { PhXCircle } from "@phosphor-icons/vue";
 
 const workoutStore = useWorkoutStore();
 const date = new Date();
@@ -121,11 +122,9 @@ const removeExercise = (exercise) => {
         :key="exercise.id"
         class="mb-12"
       >
-        <div class="flex justify-between gap-2.5 mt-12">
+        <div class="flex justify-between items-center gap-2.5 mt-12 mb-6">
           <div>
-            <span>
-              {{ exercise.name }}
-            </span>
+            <span class="font-bold">{{ exercise.name.toUpperCase() }}</span>
           </div>
           <button
             class="p-2 bg-black text-white"
@@ -137,13 +136,18 @@ const removeExercise = (exercise) => {
 
         <!-- for each set added to exercises, set up form for each set -->
         <div v-for="set in exercise.sets" :key="set.set_number" class="mb-2">
-          <p class="text-black">Set {{ set.set_number }}</p>
-          <div class="flex flex-row justify-between items-center space-x-4">
-            <div class="flex flex-col w-1/4">
-              <label class="text-black text-sm">Set Type</label>
+          <div class="flex flex-row justify-between items-center gap-4">
+            <!-- Set number -->
+            <div class="w-0.5">
+              <span class="text-black">{{ set.set_number }}</span>
+            </div>
+
+            <!-- Input fields with labels -->
+            <div class="flex flex-col w-20">
+              <label class="text-black text-sm text-center">Type</label>
               <select
                 v-model="set.set_type"
-                class="border rounded bg-gray-100 text-black p-2"
+                class="border rounded bg-gray-100 text-black p-1 text-center"
               >
                 <option selected value="warmup">W</option>
                 <option value="failure">F</option>
@@ -152,46 +156,49 @@ const removeExercise = (exercise) => {
               </select>
             </div>
 
-            <div class="flex flex-col w-1/6">
-              <label class="text-black text-sm">Reps</label>
+            <div class="flex flex-col w-20">
+              <label class="text-black text-sm text-center">Reps</label>
               <input
                 v-model="set.reps"
                 type="number"
                 min="0"
-                class="border rounded bg-white text-black p-2"
+                class="border rounded bg-gray-100 text-black p-1 text-center"
               />
             </div>
 
-            <div class="flex flex-col w-1/6">
-              <label class="text-black text-sm">Weight (lbs)</label>
+            <div class="flex flex-col w-24">
+              <label class="text-black text-sm text-center">Weight(lbs)</label>
               <input
                 v-model="set.weight"
                 type="number"
                 min="0"
-                class="border rounded bg-white text-black p-2"
+                class="border rounded bg-gray-100 text-black p-1 text-center"
               />
             </div>
 
-            <div class="flex flex-col w-1/8">
-              <label class="text-black mb-4 text-center text-sm"
-                >Complete?</label
-              >
-              <input v-model="set.complete" type="checkbox" class="p-2" />
-            </div>
+            <!-- Align checkbox and delete icon -->
+            <div class="flex items-center w-16 justify-between">
+              <div class="flex items-center">
+                <input
+                  v-model="set.complete"
+                  type="checkbox"
+                  class="checkbox"
+                />
+              </div>
 
-            <div class="flex flex-col w-1/8">
-              <label class="text-black mb-4 text-center">Delete?</label>
-              <input
+              <PhXCircle
                 @click="removeSet(exercise.id, set.set_number)"
-                type="checkbox"
-                class="p-2"
+                :size="24"
+                color="#fd4949"
+                weight="fill"
+                class="cursor-pointer"
               />
             </div>
           </div>
         </div>
 
         <button
-          class="bg-stone-500 hover:bg-stone-700 text-white p-2 rounded"
+          class="w-full mt-2 bg-zinc-700 hover:bg-zinc-900 text-white p-2 rounded"
           @click="addSet(exercise.id)"
         >
           Add New Set
@@ -202,10 +209,25 @@ const removeExercise = (exercise) => {
     <div v-if="workoutStore.workoutActive">
       <button
         @click="addNewExercise()"
-        class="flex bg-violet-500 hover:bg-violet-700 text-white p-2 rounded mt-7 mx-auto mb-20"
+        class="flex bg-zinc-800 hover:bg-zinc-950 text-white p-2 rounded mt-7 mx-auto mb-20"
       >
         <RouterLink to="/exercises"> Add New Exercise </RouterLink>
       </button>
     </div>
   </div>
 </template>
+
+<style scoped>
+/* Adjust layout for mobile screens */
+@media (max-width: 640px) {
+  .w-16 {
+    width: 50px;
+  }
+  .w-20 {
+    width: 60px;
+  }
+  .w-24 {
+    width: 80px;
+  }
+}
+</style>
