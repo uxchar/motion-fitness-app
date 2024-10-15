@@ -4,13 +4,13 @@ import { PhBicycle, PhTrendUp, PhPlus, PhBarbell } from "@phosphor-icons/vue";
 
 <template>
   <nav
-    class="floating-nav flex justify-around w-11/12 bg-zinc-950 p-0.5 rounded-full shadow-xl"
+    class="floating-nav flex justify-around w-11/12 bg-zinc-950 rounded-full shadow-xl"
   >
     <RouterLink
       to="/"
       class="flex flex-col items-center space-y-1 hover:bg-sky-700 rounded-3xl py-2 px-4"
     >
-      <PhTrendUp :size="32" weight="fill" color="white" />
+      <PhTrendUp :size="26" weight="fill" color="white" />
       <span class="btn">Dashboard</span>
     </RouterLink>
 
@@ -18,7 +18,7 @@ import { PhBicycle, PhTrendUp, PhPlus, PhBarbell } from "@phosphor-icons/vue";
       to="/templates"
       class="flex flex-col items-center space-y-1 hover:bg-sky-700 rounded-3xl py-2 px-4"
     >
-      <PhPlus :size="32" weight="fill" color="white" />
+      <PhPlus :size="26" weight="fill" color="white" />
       <span class="btn">Templates</span>
     </RouterLink>
 
@@ -26,7 +26,7 @@ import { PhBicycle, PhTrendUp, PhPlus, PhBarbell } from "@phosphor-icons/vue";
       to="/workout"
       class="flex flex-col items-center space-y-1 hover:bg-sky-700 rounded-3xl py-2 px-4"
     >
-      <PhBicycle :size="32" weight="fill" color="white" />
+      <PhBicycle :size="26" weight="fill" color="white" />
       <span class="btn">Workout</span>
     </RouterLink>
 
@@ -34,7 +34,7 @@ import { PhBicycle, PhTrendUp, PhPlus, PhBarbell } from "@phosphor-icons/vue";
       to="/exercises"
       class="flex flex-col items-center space-y-1 hover:bg-sky-700 rounded-3xl py-2 px-4"
     >
-      <PhBarbell :size="32" weight="fill" color="white" />
+      <PhBarbell :size="26" weight="fill" color="white" />
       <span class="btn">Exercises</span>
     </RouterLink>
   </nav>

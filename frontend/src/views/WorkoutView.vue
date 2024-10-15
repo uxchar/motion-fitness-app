@@ -86,14 +86,14 @@ const removeExercise = (exercise) => {
 <template>
   <div class="min-h-screen">
     <div class="flex justify-between">
-      <h1 class="text-3xl mb-10">Active Workout</h1>
+      <h1 class="text-4xl font-medium mt-2.5 mb-10">Active Workout</h1>
     </div>
 
     <div class="flex justify-between">
       <span id="workout-name">{{ formattedDate }}</span>
       <button
         @click="startWorkout()"
-        class="bg-green-500 hover:bg-green-700 text-white p-2 rounded"
+        class="bg-green-500 hover:bg-green-700 text-zinc-50 p-2 rounded"
         v-if="!workoutStore.workoutActive"
       >
         Start Workout
@@ -121,13 +121,14 @@ const removeExercise = (exercise) => {
         :key="exercise.id"
         class="mb-12"
       >
-        <div class="flex flex-col gap-2.5 mb-5">
+        <div class="flex justify-between gap-2.5 mt-12">
           <div>
-            <label class="text-black">Exercise Name:</label>
-            {{ exercise.name }}
+            <span>
+              {{ exercise.name }}
+            </span>
           </div>
           <button
-            class="p-4 bg-black text-white"
+            class="p-2 bg-black text-white"
             @click="removeExercise(exercise)"
           >
             Remove Exercise
@@ -139,20 +140,20 @@ const removeExercise = (exercise) => {
           <p class="text-black">Set {{ set.set_number }}</p>
           <div class="flex flex-row justify-between items-center space-x-4">
             <div class="flex flex-col w-1/4">
-              <label class="text-black">Set Type</label>
+              <label class="text-black text-sm">Set Type</label>
               <select
                 v-model="set.set_type"
-                class="border rounded bg-white text-black p-2"
+                class="border rounded bg-gray-100 text-black p-2"
               >
-                <option selected value="warmup">Warmup</option>
-                <option value="failure">Failure</option>
-                <option value="dropset">Dropset</option>
-                <option value="regular">Regular</option>
+                <option selected value="warmup">W</option>
+                <option value="failure">F</option>
+                <option value="dropset">D</option>
+                <option value="regular">R</option>
               </select>
             </div>
 
             <div class="flex flex-col w-1/6">
-              <label class="text-black">Reps</label>
+              <label class="text-black text-sm">Reps</label>
               <input
                 v-model="set.reps"
                 type="number"
@@ -162,7 +163,7 @@ const removeExercise = (exercise) => {
             </div>
 
             <div class="flex flex-col w-1/6">
-              <label class="text-black">Weight (lbs)</label>
+              <label class="text-black text-sm">Weight (lbs)</label>
               <input
                 v-model="set.weight"
                 type="number"
@@ -172,7 +173,9 @@ const removeExercise = (exercise) => {
             </div>
 
             <div class="flex flex-col w-1/8">
-              <label class="text-black mb-4 text-center">Complete?</label>
+              <label class="text-black mb-4 text-center text-sm"
+                >Complete?</label
+              >
               <input v-model="set.complete" type="checkbox" class="p-2" />
             </div>
 

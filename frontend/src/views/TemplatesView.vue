@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from "vue";
+import { PhPlusCircle } from "@phosphor-icons/vue";
 
 // initialize exercises with independent sets for each exercise
 const templates = ref([
@@ -28,26 +29,24 @@ const addNewTemplate = () => {
 </script>
 
 <template>
-  <div class="flex justify-between">
-    <h2 class="mb-10 text-2xl font-bold">Templates</h2>
+  <div class="flex h-28 w-full justify-between items-center">
+    <h2 class="text-4xl font-medium mt-2.5 mb-10">Your Templates</h2>
     <button>
-      <RouterLink
-        to="/create-template"
-        class="bg-blue-500 hover:bg-blue-700 text-white p-4 rounded"
-        >Create Template</RouterLink
-      >
+      <!-- <RouterLink> -->
+      <PhPlusCircle :size="32" color="#0c0a09" weight="fill" />
+      <!-- </RouterLink> -->
     </button>
   </div>
 
   <div
     v-for="template in templates"
     :key="template.id"
-    class="mb-8 p-6 bg-white-100 bg-slate-300 rounded-md w-1/4"
+    class="mb-6 p-4 bg-zinc-950 text-zinc-50 rounded-lg w-full"
   >
     <div class="flex flex-col items-center">
       <p class="font-semibold text-lg">{{ template.templateName }}</p>
-      <p class="text-gray-500">{{ template.templateNote }}</p>
-      <p class="text-gray-500">{{ template.dateCreated }}</p>
+      <p class="text-zinc-400">{{ template.templateNote }}</p>
+      <p class="text-zinc-400">{{ template.dateCreated }}</p>
     </div>
   </div>
 </template>

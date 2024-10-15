@@ -1,6 +1,7 @@
 <script setup>
 import { useWorkoutStore } from "@/stores/workoutStore";
 import { ref, onMounted, computed } from "vue";
+import { PhPlusCircle } from "@phosphor-icons/vue";
 
 const workoutStore = useWorkoutStore();
 // Initialize exercises and selectedExercises
@@ -27,7 +28,13 @@ onMounted(async () => {
 });
 const addToWorkout = (exercise) => {
   console.log(exercise);
-  workoutStore.addExercise(exercise);
+  if (workoutStore.workoutActive === false) {
+    alert(
+      "Cannot add exercise, there is currently no active workout in progress."
+    );
+  } else {
+    workoutStore.addExercise(exercise);
+  }
   console.log(workoutStore);
 };
 
@@ -58,18 +65,19 @@ const filteredExercises = computed(() => {
 
 <template>
   <div class="flex flex-col justify-center items-center min-h-screen p-6">
-    <div class="mb-16">
+    <div class="mb-16 w-full max-w-lg">
       <input
-        class="pl-2 border-2 border-black"
         type="text"
-        v-model="searchQuery"
         placeholder="Search exercises"
+        v-model="searchQuery"
+        class="text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-stone-100 dark:border-gray-600 dark:placeholder-gray-500 dark:text-grey dark:focus:ring-blue-500 dark:focus:border-blue-500"
       />
     </div>
+
     <h2 class="my-4">Filter by Body Part Target:</h2>
-    <div class="flex flex-wrap m-4 gap-4">
+    <div class="flex flex-wrap m-4 gap-4 justify-center">
       <button
-        class="bg-black text-white rounded-full ... px-4 py-2"
+        class="bg-black text-white rounded-full px-4 py-2"
         v-for="target in uniqueTargets"
         :key="target"
         @click="selectedTarget = target"
@@ -78,10 +86,11 @@ const filteredExercises = computed(() => {
       </button>
       <button @click="selectedTarget = ''">Show All</button>
     </div>
+
     <h2 class="my-4">Filter by Equipment:</h2>
-    <div class="flex flex-wrap m-4 gap-4">
+    <div class="flex flex-wrap m-4 gap-4 justify-center">
       <button
-        class="bg-black text-white rounded-full ... px-4 py-2"
+        class="bg-black text-white rounded-full px-4 py-2"
         v-for="equipment in uniqueEquipment"
         :key="equipment"
         @click="selectedEquipment = equipment"
@@ -90,29 +99,24 @@ const filteredExercises = computed(() => {
       </button>
       <button @click="selectedEquipment = ''">Show All</button>
     </div>
-    <ul>
-      <li v-for="exercise in filteredExercises" :key="exercise.id">
-        <!-- Display fetched exercises from the API -->
-        <div
-          class="flex flex-col items-center border border-gray-300 p-4 rounded-lg w-full max-w-sm my-10"
-        >
-          <div class="font-semibold text-lg mb-2">{{ exercise.name }}</div>
-          <div class="text-gray-600 mb-1">
-            Muscle Group: {{ exercise.target }}
-          </div>
-          <div class="text-gray-600 mb-1">
-            Equipment: {{ exercise.equipment }}
-          </div>
-          <button
-            class="bg-black text-white rounded-full ... px-4 py-2 mt-4"
-            @click="addToWorkout(exercise)"
-          >
-            Add to Workout
-          </button>
+
+    <div
+      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full mt-20"
+    >
+      <div
+        v-for="exercise in filteredExercises"
+        :key="exercise.id"
+        class="flex items-center border border-gray-300 p-4 rounded-lg w-full"
+      >
+        <div class="w-24 font-bold text-sm">{{ exercise.name }}</div>
+        <div class="flex flex-col gap-1 flex-grow">
+          <div class="text-sm">{{ exercise.target }}</div>
+          <div class="text-sm">{{ exercise.equipment }}</div>
         </div>
-      </li>
-    </ul>
+        <button @click="addToWorkout(exercise)">
+          <PhPlusCircle :size="36" color="#0c0a09" weight="fill" />
+        </button>
+      </div>
+    </div>
   </div>
 </template>
-
-<style scoped></style>
