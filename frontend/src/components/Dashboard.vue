@@ -40,38 +40,57 @@ onMounted(() => {
 </script>
 
 <template>
-  <div v-if="workouts.length" class="p-4">
-    <h2 class="text-xl font-bold mb-4">{{ username }}'s Workout History</h2>
-
+  <h2 class="text-4xl font-medium mt-2.5 mb-10">Hello {{ username }}</h2>
+  <div class="flex justify-between">
+    <div>
+      <h3>Average Workout Time</h3>
+      <span class="font-bold mt-1">1 hr 18 mins</span>
+    </div>
+    <div>
+      <h3>Workouts Completed</h3>
+      <span class="font-bold mt-1">16</span>
+    </div>
+  </div>
+  <h2 class="mt-32 mb-4">Your Workout History</h2>
+  <div v-if="workouts.length">
     <!-- Loop through each workout -->
     <div
       v-for="workout in workouts"
       :key="workout.workout_id"
-      class="mb-6 p-4 bg-gray-100 rounded-lg"
+      class="mb-6 p-4 bg-zinc-950 text-white rounded-lg"
     >
       <!-- Display the workout date -->
       <div class="flex justify-between">
-        <h3 class="text-lg font-semibold mb-2">
-          Workout on {{ workout.workout_date }}
-        </h3>
-        <button @click="deleteWorkout()">
+        <span class="text-sm mb-3"> Workout on {{ workout.start }} </span>
+        <!-- <button @click="deleteWorkout()">
           <img
             src="./icons/close_24dp_000000_FILL0_wght400_GRAD0_opsz24.svg"
             alt=""
           />
-        </button>
+        </button> -->
       </div>
 
       <!-- Loop through each exercise -->
-      <div v-for="exercise in workout.exercises" :key="exercise.exercise_name">
-        <strong>{{ exercise.exercise_name }}</strong>
-        <ul>
-          <!-- Loop through each set for the exercise -->
-          <li v-for="set in exercise.sets" :key="set.set_number">
-            Set {{ set.set_number }}: {{ set.reps }} reps @ {{ set.weight }} lbs
+      <div
+        class="mb-3"
+        v-for="exercise in workout.exercises"
+        :key="exercise.exercise_name"
+      >
+        <div class="font-bold">{{ exercise.exercise_name }}</div>
+
+        <!-- Loop through each set for the exercise -->
+        <div
+          class="flex gap-5 items-center"
+          v-for="set in exercise.sets"
+          :key="set.set_number"
+        >
+          <div class="w-12">Set {{ set.set_number }}</div>
+          <div class="w-16">{{ set.reps }} reps</div>
+          <div class="w-24">{{ set.weight }} lbs</div>
+          <div class="w-24">
             ({{ set.complete ? "Complete" : "Incomplete" }})
-          </li>
-        </ul>
+          </div>
+        </div>
       </div>
     </div>
   </div>

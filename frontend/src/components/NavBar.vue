@@ -4,7 +4,7 @@ import { PhBicycle, PhTrendUp, PhPlus, PhBarbell } from "@phosphor-icons/vue";
 
 <template>
   <nav
-    class="floating-nav flex justify-around w-5/6 bg-neutral-900 p-2 rounded-full shadow-xl"
+    class="floating-nav flex justify-around w-11/12 bg-zinc-950 p-0.5 rounded-full shadow-xl"
   >
     <RouterLink
       to="/"
