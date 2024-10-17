@@ -5,7 +5,11 @@ import NavBar from "@/components/NavBar.vue";
 
 <template>
   <div class="flex flex-col min-h-screen">
-    <header></header>
+    <header>
+      <RouterLink to="/login" class="flex flex-col items-end space-y-1 p-4">
+        <span class="text-lg bg-black text-white px-4 py-2">Login</span>
+      </RouterLink>
+    </header>
     <main class="flex-1 p-5 mb-32">
       <RouterView />
     </main>

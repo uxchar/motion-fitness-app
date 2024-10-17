@@ -29,26 +29,29 @@ const addNewTemplate = () => {
 </script>
 
 <template>
-  <div class="flex w-full justify-between items-center">
-    <h2 class="text-4xl font-medium mt-2.5 mb-10">Your Templates</h2>
-    <button>
-      <!-- <RouterLink> -->
-      <PhPlusCircle :size="32" color="#0c0a09" weight="fill" />
-      <!-- </RouterLink> -->
-    </button>
-  </div>
+  <div v-if="isAuth">
+    <div class="flex w-full justify-between items-center">
+      <h2 class="text-4xl font-medium mt-2.5 mb-10">Your Templates</h2>
+      <button>
+        <!-- <RouterLink> -->
+        <PhPlusCircle :size="32" color="#0c0a09" weight="fill" />
+        <!-- </RouterLink> -->
+      </button>
+    </div>
 
-  <div
-    v-for="template in templates"
-    :key="template.id"
-    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6 p-4 w-full"
-  >
     <div
-      class="flex flex-col items-center bg-zinc-950 text-zinc-50 rounded-lg py-14"
+      v-for="template in templates"
+      :key="template.id"
+      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6 p-4 w-full"
     >
-      <p class="font-semibold text-lg">{{ template.templateName }}</p>
-      <p class="text-zinc-400">{{ template.templateNote }}</p>
-      <p class="text-zinc-400">{{ template.dateCreated }}</p>
+      <div
+        class="flex flex-col items-center bg-zinc-950 text-zinc-50 rounded-lg py-14"
+      >
+        <p class="font-semibold text-lg">{{ template.templateName }}</p>
+        <p class="text-zinc-400">{{ template.templateNote }}</p>
+        <p class="text-zinc-400">{{ template.dateCreated }}</p>
+      </div>
     </div>
   </div>
+  <div v-else class="p-4"><p>Must login create templates</p></div>
 </template>

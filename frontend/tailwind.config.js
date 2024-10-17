@@ -10,6 +10,9 @@ export default {
       },
     },
   },
+  daisyui: {
+    themes: ["lofi", "coffee"],
+  },
 
-  plugins: [],
+  plugins: [require("@tailwindcss/typography"), require("daisyui")],
 };

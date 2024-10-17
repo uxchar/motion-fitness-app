@@ -1,38 +1,48 @@
 <script setup>
 import { ref } from "vue";
-import { useCookies } from "vue3-cookies";
+import { useRoute, useRouter } from "vue-router";
+import { useAuthStore } from "@/stores/authStore";
 
-const { cookies } = useCookies();
+const router = useRouter();
+
 const email = ref("");
 const password = ref("");
+const authStore = useAuthStore();
 
-const login = (event) => {
-  event.preventDefault();
+const params = {
+  method: "POST",
+  headers: {
+    Accept: "application/json",
+    "Content-Type": "application/json",
+  },
+};
 
-  const params = {
-    method: "POST",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ email: email.value, password: password.value }),
-  };
-
-  fetch("http://localhost:3000/login", params)
-    .then((response) => {
-      if (response.headers.get("content-type")?.includes("application/json")) {
-        return response.json();
-      } else {
-        return response.text();
-      }
-    })
-    .then((data) => {
-      console.log(data);
-      cookies.set("token", data);
-    })
-    .catch((error) => {
-      console.error("Error:", error);
+const login = async () => {
+  try {
+    const response = await fetch("http://localhost:3000/login", {
+      ...params,
+      body: JSON.stringify({ email: email.value, password: password.value }),
     });
+
+    const data = await response.json();
+
+    console.log("Response status:", response.status);
+    console.log("Response data:", data);
+
+    if (response.ok && data.token) {
+      // If the response is OK and we have a token, save the token and update the store
+      localStorage.setItem("token", data.token);
+      authStore.setToken(data.token);
+
+      // Redirect the user to the dashboard or any other page after login
+      router.push("/");
+    } else {
+      // Log an error message if credentials are invalid or token is missing
+      console.error("Login failed:", data.message || "No token provided");
+    }
+  } catch (error) {
+    console.error("Error during login:", error);
+  }
 };
 </script>
 
@@ -40,7 +50,7 @@ const login = (event) => {
   <div class="min-h-screen flex items-center justify-center bg-gray-100">
     <div class="bg-white p-8 rounded-lg w-80">
       <h2 class="text-2xl font-bold mb-4 text-center">Login</h2>
-      <form>
+      <form @submit.prevent="login">
         <div class="mb-4">
           <label class="block text-gray-700 mb-2" for="username">Email</label>
           <input
@@ -62,7 +72,6 @@ const login = (event) => {
           />
         </div>
         <button
-          @click="login()"
           type="submit"
           class="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition-colors"
         >

@@ -1,19 +1,18 @@
+// JWT verification middleware
 const jwt = require("jsonwebtoken");
+const JWT_SECRET = process.env.JWT_SECRET;
 
 const validateToken = (req, res, next) => {
-  // get token
-  const token = req.header("Authorization");
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
 
-  // check if token is valid
-  try {
-    // if valid token setID and continue to next route
-    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-    req.userId = decodedToken.userId;
+  if (!token) return res.sendStatus(401);
+
+  jwt.verify(token, JWT_SECRET, (err, user) => {
+    if (err) return res.sendStatus(403);
+    req.user = user;
     next();
-  } catch (error) {
-    //if invalid token / no token sent back, unauthorized
-    res.send("Invalid auth token");
-  }
+  });
 };
 
 module.exports = validateToken;

@@ -1,14 +1,14 @@
 require("dotenv").config();
 
-let express = require("express");
-let bodyParser = require("body-parser");
+const express = require("express");
+const bodyParser = require("body-parser");
 const cors = require("cors");
 const axios = require("axios");
-const Pool = require("pg").Pool;
 const jwt = require("jsonwebtoken");
-const validateToken = require("./middleware/authmiddleware");
+const Pool = require("pg").Pool;
+const validateToken = require("./middleware/authmiddleware"); // Assuming middleware is in a separate file
 
-let app = express();
+const app = express();
 
 const pool = new Pool({
   user: "chauncey",
@@ -28,7 +28,37 @@ app.use(cors(corsOptions));
 app.use(bodyParser.json());
 
 const API_KEY = process.env.API_KEY;
+const JWT_SECRET = process.env.JWT_SECRET;
 
+// Login Route
+app.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const result = await pool.query(
+      "SELECT * FROM users WHERE email = $1 AND password = $2",
+      [email, password]
+    );
+
+    if (result.rows.length > 0) {
+      const user = result.rows[0];
+      const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, {
+        expiresIn: "1h",
+      });
+
+      res.json({ token });
+    } else {
+      res.status(401).json({ message: "Invalid email or password" });
+    }
+  } catch (error) {
+    console.error("Error during login:", error);
+    res
+      .status(500)
+      .json({ message: "Error during login. Please try again later." });
+  }
+});
+
+// External API Data Fetch
 app.get("/api/data", async (req, res) => {
   try {
     const https = require("https");
@@ -56,6 +86,7 @@ app.get("/api/data", async (req, res) => {
   }
 });
 
+// Get Workouts Route (Protected)
 app.get("/workouts/:userId", async (req, res) => {
   const { userId } = req.params;
 
@@ -93,7 +124,6 @@ app.get("/workouts/:userId", async (req, res) => {
       if (!workout) {
         workout = {
           workout_id: row.workout_id,
-          workout_date: row.workout_date,
           exercises: [],
         };
 
@@ -123,7 +153,7 @@ app.get("/workouts/:userId", async (req, res) => {
     res.json(workouts);
   } catch (error) {
     console.error(error);
-    res.status(500).send("Server Error");
+    res.status(500).json("Server Error");
   }
 });
 
@@ -137,8 +167,6 @@ app.post("/workout/:userId", async function (req, res) {
       [userId, startTime, finishTime]
     );
     const workoutId = workoutResult.rows[0].id;
-
-    //helpful link understanding loop types: https://medium.com/@trig79/javascript-the-early-lessons-for-vs-foreach-vs-for-of-loops-iteration-which-one-is-better-b557f385045
 
     for (const exercise of exercises) {
       const exerciseResult = await pool.query(
@@ -170,59 +198,22 @@ app.post("/workout/:userId", async function (req, res) {
   }
 });
 
-// app.delete("/workouts/:userId", async (req, res) => {
-//   const { userId } = req.params;
-//   try {
-//     const result = await pool.query(
-//       `DELETE FROM workouts WHERE id = $1 AND user_id = $2,
-//   `,
-//       [id, userId]
-//     );
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).send("Server Error");
-//   }
-// });
+// Delete a Workout (Protected)
+app.delete("/workouts/:userId/:workoutId", async (req, res) => {
+  const { userId, workoutId } = req.params;
+  try {
+    await pool.query(`DELETE FROM workouts WHERE id = $1 AND user_id = $2`, [
+      workoutId,
+      userId,
+    ]);
+    res.json({ message: "Workout deleted successfully." });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Server Error");
+  }
+});
 
-// app.post("/login", (req, res) => {
-//   //get email and password
-//   const { email, password } = req.body;
-//   //check email and password match
-//   pool.query(
-//     "SELECT * FROM users WHERE email = $1 AND password = $2",
-//     [email, password],
-//     (error, results) => {
-//       if (error) {
-//         console.log(error);
-//       }
-//       if (results.rows.length > 0) {
-//         const token = jwt.sign(
-//           { userID: results.rows[0].id },
-//           process.env.JWT_SECRET,
-//           {
-//             expiresIn: "1h",
-//           }
-//         );
-//         res.send(token);
-//       } else {
-//         res.send("User login unsuccessful. Incorrect login details.");
-//       }
-//     }
-//   );
-//   send back auth token if successful
-// });
-
-// app.get("/:id", validateToken, (req, res) => {});
-// app.get("/:id/templates", validateToken, (req, res) => {});
-// app.get("/:id/custom-exercises", validateToken, (req, res) => {});
-
-// app.post("/:id/workout", validateToken, (req, res) => {});
-// app.post("/:id/create-template", validateToken, (req, res) => {});
-// app.post("/:id/create-exercise", validateToken, (req, res) => {});
-
-// app.put("/:id/:template_id/update-template", validateToken, (req, res) => {});
-// app.put("/:id/:workout_id/update-workout", validateToken, (req, res) => {});
-
+// Start the server
 app.listen(3000, () => {
   console.log("Server is running on port 3000");
 });

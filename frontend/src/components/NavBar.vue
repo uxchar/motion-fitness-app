@@ -8,34 +8,34 @@ import { PhBicycle, PhTrendUp, PhPlus, PhBarbell } from "@phosphor-icons/vue";
   >
     <RouterLink
       to="/"
-      class="flex flex-col items-center space-y-1 hover:bg-sky-700 rounded-3xl py-2 px-4"
+      class="flex flex-col items-center space-y-1 hover:bg-sky-700 rounded-3xl p-4"
     >
       <PhTrendUp :size="26" weight="fill" color="white" />
-      <span class="btn">Dashboard</span>
+      <span class="text-sm text-white">Dashboard</span>
     </RouterLink>
 
     <RouterLink
       to="/templates"
-      class="flex flex-col items-center space-y-1 hover:bg-sky-700 rounded-3xl py-2 px-4"
+      class="flex flex-col items-center space-y-1 hover:bg-sky-700 rounded-3xl p-4"
     >
       <PhPlus :size="26" weight="fill" color="white" />
-      <span class="btn">Templates</span>
+      <span class="text-sm text-white">Templates</span>
     </RouterLink>
 
     <RouterLink
       to="/workout"
-      class="flex flex-col items-center space-y-1 hover:bg-sky-700 rounded-3xl py-2 px-4"
+      class="flex flex-col items-center space-y-1 hover:bg-sky-700 rounded-3xl p-4"
     >
       <PhBicycle :size="26" weight="fill" color="white" />
-      <span class="btn">Workout</span>
+      <span class="text-sm text-white">Workout</span>
     </RouterLink>
 
     <RouterLink
       to="/exercises"
-      class="flex flex-col items-center space-y-1 hover:bg-sky-700 rounded-3xl py-2 px-4"
+      class="flex flex-col items-center space-y-1 hover:bg-sky-700 rounded-3xl p-4"
     >
       <PhBarbell :size="26" weight="fill" color="white" />
-      <span class="btn">Exercises</span>
+      <span class="text-sm text-white">Exercises</span>
     </RouterLink>
   </nav>
 </template>
