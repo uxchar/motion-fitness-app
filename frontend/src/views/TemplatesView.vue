@@ -1,6 +1,9 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { PhPlusCircle } from "@phosphor-icons/vue";
+import { useAuthStore } from "@/stores/authStore";
+
+const authStore = useAuthStore();
 
 // initialize exercises with independent sets for each exercise
 const templates = ref([
@@ -29,7 +32,7 @@ const addNewTemplate = () => {
 </script>
 
 <template>
-  <div v-if="isAuth">
+  <div v-if="authStore.token">
     <div class="flex w-full justify-between items-center">
       <h2 class="text-4xl font-medium mt-2.5 mb-10">Your Templates</h2>
       <button>

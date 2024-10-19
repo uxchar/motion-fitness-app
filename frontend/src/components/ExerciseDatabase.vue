@@ -1,5 +1,7 @@
 <script setup>
 import { useWorkoutStore } from "@/stores/workoutStore";
+import { useAuthStore } from "@/stores/authStore";
+
 import { ref, onMounted, computed } from "vue";
 import { PhPlusCircle } from "@phosphor-icons/vue";
 
@@ -10,7 +12,7 @@ const exercises = ref([]);
 const searchQuery = ref("");
 const selectedTarget = ref("");
 const selectedEquipment = ref("");
-const isAuth = ref("");
+const isActive = ref(false);
 
 const url = "http://localhost:3000/api/data";
 
@@ -20,8 +22,7 @@ onMounted(async () => {
     const response = await fetch(url);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
-    } else if (response.ok && authStore.token) {
-      isAuth = true;
+    } else if (response.ok && authStore.token != null) {
       const result = await response.json();
       exercises.value = result;
       console.log(result);
@@ -72,7 +73,7 @@ const filteredExercises = computed(() => {
 </script>
 
 <template>
-  <div v-if="isAuth">
+  <div v-if="authStore.token">
     <div
       v-if="!workoutStore.workoutActive"
       role="alert"
@@ -153,6 +154,12 @@ const filteredExercises = computed(() => {
           </button>
         </div>
       </div>
+    </div>
+    <div class="join">
+      <button class="join-item btn">1</button>
+      <button class="join-item btn btn-active">2</button>
+      <button class="join-item btn">3</button>
+      <button class="join-item btn">4</button>
     </div>
   </div>
   <div v-else class="p-4"><p>Must login to view exercises list</p></div>

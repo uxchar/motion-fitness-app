@@ -2,13 +2,12 @@
 import { ref, onMounted } from "vue";
 import { PhCheckCircle, PhDotsThreeOutlineVertical } from "@phosphor-icons/vue";
 import { useAuthStore } from "@/stores/authStore";
+import { format } from "date-fns";
 
 const authStore = useAuthStore();
-
 const workouts = ref([]);
 const userId = 1;
 const username = "User";
-const isAuth = ref(false);
 
 const params = {
   method: "GET",
@@ -16,6 +15,14 @@ const params = {
     Accept: "application/json",
     "Content-Type": "application/json",
     Authorization: "Bearer {token}",
+  },
+};
+
+const options = {
+  method: "DELETE",
+  headers: {
+    Accept: "application/json",
+    "Content-Type": "application/json",
   },
 };
 
@@ -27,31 +34,32 @@ const fetchWorkouts = async () => {
     );
     const data = await response.json();
     workouts.value = data;
+    console.log(data);
   } catch (error) {
     console.error("Error fetching workouts:", error);
   }
 };
-// const url = `http://localhost:3000/workouts/${userId}/${workoutId}`;
-// const options = {
-//   method: "DELETE",
-//   headers: {
-//     Accept: "application/json",
-//     "Content-Type": "application/json",
-//   },
-// };
-// const deleteWorkout = () => {
-//   try {
-//     const response = fetch(url, options);
-//     const data = response.json();
-//     workouts.value = data;
-//   } catch (error) {
-//     console.error("Error deleting workout:", error);
-//   }
-// };
+
+const deleteWorkout = async (workoutId) => {
+  try {
+    console.log(workoutId);
+
+    const response = await fetch(
+      `http://localhost:3000/workouts/${userId}/${workoutId}`,
+      options
+    );
+    response.status = "Delete successful";
+  } catch (error) {
+    console.error("Error deleting workout:", error);
+  }
+};
+
+const formatDate = (timestamp) => {
+  return format(new Date(timestamp), "PPpp");
+};
 
 onMounted(() => {
   if (authStore.token != null) {
-    isAuth.value = true;
     fetchWorkouts();
   } else {
     console.log("not logined");
@@ -60,7 +68,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div v-if="isAuth">
+  <div v-if="authStore.token">
     <h2 class="text-4xl font-medium mt-2.5 mb-10">Hello {{ username }}</h2>
     <div class="flex flex-col gap-6 justify-between">
       <div>
@@ -69,7 +77,7 @@ onMounted(() => {
       </div>
       <div>
         <h3>Workouts Completed</h3>
-        <span class="text-2xl font-bold mt-1">16</span>
+        <span class="text-2xl font-bold mt-1">{{ workouts.length }}</span>
       </div>
     </div>
     <h2 class="mt-32 mb-4">Your Workout History</h2>
@@ -85,12 +93,28 @@ onMounted(() => {
       >
         <!-- Display the workout date -->
         <div class="flex justify-between">
-          <span class="text-sm mb-3"> Workout on {{ workout.start }} </span>
-          <PhDotsThreeOutlineVertical
-            :size="16"
-            color="#fafafa"
-            weight="fill"
-          />
+          <span class="text-sm mb-3">
+            {{ formatDate(workout.start) }}
+          </span>
+          <div class="dropdown dropdown-end">
+            <PhDotsThreeOutlineVertical
+              :size="16"
+              color="#fafafa"
+              weight="fill"
+              tabindex="0"
+              role="button"
+            />
+            <ul
+              tabindex="0"
+              class="dropdown-content menu bg-gray-400 text-black rounded-box z-[1] w-52 p-2 shadow"
+            >
+              <li><a>Edit</a></li>
+              <li @click="deleteWorkout(workout.workout_id)">
+                <a>Delete</a>
+              </li>
+            </ul>
+          </div>
+
           <!-- <button @click="deleteWorkout()">
           <img
             src="./icons/close_24dp_000000_FILL0_wght400_GRAD0_opsz24.svg"
@@ -105,7 +129,9 @@ onMounted(() => {
           v-for="exercise in workout.exercises"
           :key="exercise.exercise_name"
         >
-          <div class="font-bold">{{ exercise.exercise_name }}</div>
+          <div class="font-bold mb-1.5 capitalize">
+            {{ exercise.exercise_name }}
+          </div>
 
           <!-- Loop through each set for the exercise -->
           <div

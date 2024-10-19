@@ -1,14 +1,32 @@
 <script setup>
 import { RouterLink, RouterView } from "vue-router";
 import NavBar from "@/components/NavBar.vue";
+import { useAuthStore } from "@/stores/authStore";
+import { ref } from "vue";
+
+const authStore = useAuthStore();
+authStore.loadToken();
+
+const logout = () => {
+  authStore.logout();
+};
 </script>
 
 <template>
   <div class="flex flex-col min-h-screen">
     <header>
-      <RouterLink to="/login" class="flex flex-col items-end space-y-1 p-4">
-        <span class="text-lg bg-black text-white px-4 py-2">Login</span>
-      </RouterLink>
+      <div v-if="!authStore.token">
+        <RouterLink to="/login" class="flex flex-col items-end space-y-1 p-4">
+          <span class="text-lg bg-black text-white px-4 py-2">Login</span>
+        </RouterLink>
+      </div>
+      <div v-else>
+        <div class="flex flex-col items-end space-y-1 p-4">
+          <button @click="logout" class="flex flex-col items-end space-y-1 p-4">
+            <span class="text-lg bg-black text-white px-4 py-2">Logout</span>
+          </button>
+        </div>
+      </div>
     </header>
     <main class="flex-1 p-5 mb-32">
       <RouterView />

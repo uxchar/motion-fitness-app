@@ -1,12 +1,16 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { useWorkoutStore } from "@/stores/workoutStore";
+import { useAuthStore } from "@/stores/authStore";
 import { PhXCircle } from "@phosphor-icons/vue";
+import { useRouter } from "vue-router";
 
+const router = useRouter();
 const workoutStore = useWorkoutStore();
+const authStore = useAuthStore();
+
 const date = new Date();
 const formattedDate = date.toLocaleDateString();
-const userId = 1;
 
 const startWorkout = () => {
   workoutStore.startWorkout();
@@ -15,32 +19,7 @@ const startWorkout = () => {
 
 const finishWorkout = () => {
   workoutStore.finishWorkout();
-  console.log("Workout finished at:", workoutStore.finishTime);
-
-  const duration =
-    (new Date(workoutStore.finishTime) - new Date(workoutStore.startTime)) /
-    1000 /
-    60;
-  console.log("Workout Time:", duration, "minutes");
-
-  const workoutData = {
-    exercises: workoutStore.selectedExercises,
-    startTime: workoutStore.startTime,
-    finishTime: workoutStore.finishTime,
-  };
-
-  fetch(`http://localhost:3000/workout/${userId}`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    },
-    body: JSON.stringify(workoutData),
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      console.log(data);
-    });
+  console.log("Workout endd at:", workoutStore.finishTime);
 };
 
 const cancelWorkout = () => {
@@ -85,7 +64,7 @@ const removeExercise = (exercise) => {
 </script>
 
 <template>
-  <div v-if="isAuth">
+  <div v-if="authStore.token">
     <div class="min-h-screen">
       <div class="flex justify-between">
         <h1 class="text-4xl font-medium mt-2.5 mb-10">Active Workout</h1>
@@ -125,7 +104,7 @@ const removeExercise = (exercise) => {
         >
           <div class="flex justify-between items-center gap-2.5 mt-12 mb-6">
             <div>
-              <span class="font-bold">{{ exercise.name.toUpperCase() }}</span>
+              <span class="font-bold capitalize">{{ exercise.name }}</span>
             </div>
             <button
               class="p-2 bg-black text-white"
