@@ -6,8 +6,7 @@ const cors = require("cors");
 const axios = require("axios");
 const jwt = require("jsonwebtoken");
 const Pool = require("pg").Pool;
-const validateToken = require("./middleware/authmiddleware"); // Assuming middleware is in a separate file
-
+// const validateToken = require("./middleware/authmiddleware");
 const app = express();
 
 const pool = new Pool({
@@ -86,7 +85,6 @@ app.get("/api/data", async (req, res) => {
   }
 });
 
-// Get Workouts Route (Protected)
 app.get("/workouts/:userId", async (req, res) => {
   const { userId } = req.params;
 
@@ -94,6 +92,8 @@ app.get("/workouts/:userId", async (req, res) => {
     const result = await pool.query(
       `
       SELECT 
+      workouts.start,
+      workouts.finish,
       workouts.id AS workout_id,
       workout_exercises.exercise_name,
       exercise_sets.set_number,
@@ -124,6 +124,8 @@ app.get("/workouts/:userId", async (req, res) => {
       if (!workout) {
         workout = {
           workout_id: row.workout_id,
+          start: row.start,
+          finish: row.finish,
           exercises: [],
         };
 
@@ -198,7 +200,6 @@ app.post("/workout/:userId", async function (req, res) {
   }
 });
 
-// Delete a Workout (Protected)
 app.delete("/workouts/:userId/:workoutId", async (req, res) => {
   const { userId, workoutId } = req.params;
   try {
