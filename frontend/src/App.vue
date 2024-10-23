@@ -17,13 +17,17 @@ const logout = () => {
     <header>
       <div v-if="!authStore.token">
         <RouterLink to="/login" class="flex flex-col items-end space-y-1 p-4">
-          <span class="text-lg bg-black text-white px-4 py-2">Login</span>
+          <span class="text-lg bg-black text-white px-4 py-2 rounded-md"
+            >Login</span
+          >
         </RouterLink>
       </div>
       <div v-else>
         <div class="flex flex-col items-end space-y-1 p-4">
           <button @click="logout" class="flex flex-col items-end space-y-1 p-4">
-            <span class="text-lg bg-black text-white px-4 py-2">Logout</span>
+            <span class="text-lg bg-black text-white px-4 py-2 rounded-md"
+              >Logout</span
+            >
           </button>
         </div>
       </div>

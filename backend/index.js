@@ -41,11 +41,12 @@ app.post("/login", async (req, res) => {
 
     if (result.rows.length > 0) {
       const user = result.rows[0];
+      console.log(user);
       const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, {
         expiresIn: "1h",
       });
 
-      res.json({ token });
+      res.json({ token, userId: user.id });
     } else {
       res.status(401).json({ message: "Invalid email or password" });
     }
@@ -70,7 +71,7 @@ app.get("/api/data", async (req, res) => {
           "x-rapidapi-host": "exercisedb.p.rapidapi.com",
         },
         httpsAgent: new https.Agent({
-          rejectUnauthorized: false, // Disable SSL verification
+          rejectUnauthorized: false, // Disable SSL verification, was not working when I trid without this
         }),
       }
     );
@@ -85,6 +86,7 @@ app.get("/api/data", async (req, res) => {
   }
 });
 
+//Get previous workout data request
 app.get("/workouts/:userId", async (req, res) => {
   const { userId } = req.params;
 
@@ -109,13 +111,30 @@ app.get("/workouts/:userId", async (req, res) => {
     WHERE 
       workouts.user_id = $1
     ORDER BY 
-      workout_exercises.exercise_name, exercise_sets.set_number;
+      workout_id, workout_exercises.exercise_name, exercise_sets.set_number;
     `,
       [userId]
     );
 
+    const favoriteExerciseResult = await pool.query(
+      `
+      SELECT exercise_name, COUNT(*) AS exercise_count
+      FROM workout_exercises
+      WHERE workout_exercises.workout_id IN (
+        SELECT id FROM workouts WHERE user_id = $1
+      )
+      GROUP BY exercise_name
+      ORDER BY exercise_count DESC
+      LIMIT 1;
+      `,
+      [userId]
+    );
+
+    const favoriteExercise = favoriteExerciseResult.rows[0];
+
     const workouts = [];
 
+    //Group data for each workout instead sending each exercise and individual set
     result.rows.forEach((row) => {
       let workout = workouts.find(
         (workoutItem) => workoutItem.workout_id === row.workout_id
@@ -152,13 +171,14 @@ app.get("/workouts/:userId", async (req, res) => {
       });
     });
 
-    res.json(workouts);
+    res.json({ workouts, favoriteExercise: favoriteExercise });
   } catch (error) {
     console.error(error);
     res.status(500).json("Server Error");
   }
 });
 
+//Insert finished workout into the database
 app.post("/workout/:userId", async function (req, res) {
   const { userId } = req.params;
   const { exercises, startTime, finishTime } = req.body;
@@ -200,6 +220,7 @@ app.post("/workout/:userId", async function (req, res) {
   }
 });
 
+//Delete previous workout route
 app.delete("/workouts/:userId/:workoutId", async (req, res) => {
   const { userId, workoutId } = req.params;
   try {
@@ -214,6 +235,44 @@ app.delete("/workouts/:userId/:workoutId", async (req, res) => {
   }
 });
 
+//Update previous workout route
+app.put("/workouts/:userId/:workoutId", async (req, res) => {
+  const { workoutId } = req.params;
+  const { exercises } = req.body;
+
+  try {
+    for (const exercise of exercises) {
+      const exerciseResult = await pool.query(
+        "SELECT id FROM workout_exercises WHERE workout_id = $1 AND exercise_name = $2;",
+        [workoutId, exercise.exercise_name]
+      );
+
+      const exerciseId = exerciseResult.rows[0].id;
+
+      for (const set of exercise.sets) {
+        await pool.query(
+          `UPDATE exercise_sets 
+           SET set_number = $1, reps = $2, weight = $3, complete = $4, set_type = $5 
+           WHERE workout_exercise_id = $6 AND set_number = $7;`,
+          [
+            set.set_number,
+            set.reps,
+            set.weight,
+            set.complete,
+            set.set_type,
+            exerciseId,
+            set.set_number,
+          ]
+        );
+      }
+    }
+
+    res.json({ message: "Workout updated successfully" });
+  } catch (error) {
+    console.error("Error updating workout:", error);
+    res.status(500).json("Server Error");
+  }
+});
 // Start the server
 app.listen(3000, () => {
   console.log("Server is running on port 3000");

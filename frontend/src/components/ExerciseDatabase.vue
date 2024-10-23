@@ -3,7 +3,7 @@ import { useWorkoutStore } from "@/stores/workoutStore";
 import { useAuthStore } from "@/stores/authStore";
 
 import { ref, onMounted, computed } from "vue";
-import { PhPlusCircle } from "@phosphor-icons/vue";
+import { PhPlusCircle, PhCheckCircle } from "@phosphor-icons/vue";
 
 const workoutStore = useWorkoutStore();
 const authStore = useAuthStore();
@@ -12,7 +12,6 @@ const exercises = ref([]);
 const searchQuery = ref("");
 const selectedTarget = ref("");
 const selectedEquipment = ref("");
-const isActive = ref(false);
 
 const url = "http://localhost:3000/api/data";
 
@@ -41,6 +40,28 @@ const addToWorkout = (exercise) => {
     workoutStore.addExercise(exercise);
   }
   console.log(workoutStore);
+};
+
+const isExerciseAdded = (exercise) => {
+  return workoutStore.selectedExercises.some(
+    (clickedExercise) => clickedExercise.id === exercise.id
+  );
+};
+
+const toggleTarget = (target) => {
+  if (selectedTarget.value === target) {
+    selectedTarget.value = "";
+  } else {
+    selectedTarget.value = target;
+  }
+};
+
+const toggleEquipment = (equipment) => {
+  if (selectedEquipment.value === equipment) {
+    selectedEquipment.value = "";
+  } else {
+    selectedEquipment.value = equipment;
+  }
 };
 
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set
@@ -98,7 +119,8 @@ const filteredExercises = computed(() => {
       Exercise List
     </h1>
 
-    <div class="flex flex-col justify-center items-center min-h-screen p-6">
+    <!-- Search bar  -->
+    <div class="flex flex-col justify-center items-center p-6">
       <div class="mb-6 w-full max-w-lg">
         <input
           type="text"
@@ -108,30 +130,38 @@ const filteredExercises = computed(() => {
         />
       </div>
 
+      <!-- Body target filter -->
       <h2 class="my-1">Filter by Body Part Target:</h2>
       <div class="flex flex-wrap m-4 gap-4 justify-center">
         <button
-          class="bg-black text-white rounded-full px-3 py-1"
+          class="px-3 py-1 rounded-full"
           v-for="target in uniqueTargets"
           :key="target"
-          @click="selectedTarget = target"
+          @click="toggleTarget(target)"
+          :class="{
+            'bg-green-500 text-white': selectedTarget === target,
+            'bg-black text-white': selectedTarget !== target,
+          }"
         >
           {{ target }}
         </button>
-        <button @click="selectedTarget = ''">Show All</button>
       </div>
 
+      <!-- Equipment filter -->
       <h2 class="my-1">Filter by Equipment:</h2>
       <div class="flex flex-wrap m-4 gap-4 justify-center">
         <button
-          class="bg-black text-white rounded-full px-3 py-1"
+          class="px-3 py-1 rounded-full"
           v-for="equipment in uniqueEquipment"
           :key="equipment"
-          @click="selectedEquipment = equipment"
+          @click="toggleEquipment(equipment)"
+          :class="{
+            'bg-green-500 text-white': selectedEquipment === equipment,
+            'bg-black text-white': selectedEquipment !== equipment,
+          }"
         >
           {{ equipment }}
         </button>
-        <button @click="selectedEquipment = ''">Show All</button>
       </div>
 
       <div
@@ -149,8 +179,15 @@ const filteredExercises = computed(() => {
             <div class="text-sm">{{ exercise.target }}</div>
             <div class="text-sm">{{ exercise.equipment }}</div>
           </div>
+          <!-- If button is unclicked show plus icon, else show check icon -->
           <button @click="addToWorkout(exercise)">
-            <PhPlusCircle :size="36" color="#0c0a09" weight="fill" />
+            <PhPlusCircle
+              v-if="!isExerciseAdded(exercise)"
+              :size="36"
+              color="#0c0a09"
+              weight="fill"
+            />
+            <PhCheckCircle v-else :size="36" color="#7ff27d" weight="fill" />
           </button>
         </div>
       </div>

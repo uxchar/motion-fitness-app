@@ -65,7 +65,7 @@ const removeExercise = (exercise) => {
 
 <template>
   <div v-if="authStore.token">
-    <div class="min-h-screen">
+    <div class="">
       <div class="flex justify-between">
         <h1 class="text-4xl font-medium mt-2.5 mb-10">Active Workout</h1>
       </div>
@@ -95,7 +95,7 @@ const removeExercise = (exercise) => {
         </button>
       </div>
 
-      <!-- render exercises and buttons only if workout is active -->
+      <!-- Render exercises and buttons only if workout is active -->
       <div v-if="workoutStore.workoutActive">
         <div
           v-for="exercise in workoutStore.selectedExercises"
@@ -114,7 +114,7 @@ const removeExercise = (exercise) => {
             </button>
           </div>
 
-          <!-- for each set added to exercises, set up form for each set -->
+          <!-- Ror each set added to exercises, set up form for each set -->
           <div v-for="set in exercise.sets" :key="set.set_number" class="mb-2">
             <div class="flex flex-row justify-between items-center gap-4">
               <!-- Set number -->
@@ -178,6 +178,7 @@ const removeExercise = (exercise) => {
               </div>
             </div>
           </div>
+          <!-- New set button -->
 
           <button
             class="w-full mt-2 bg-zinc-700 hover:bg-zinc-900 text-white p-2 rounded"
@@ -188,6 +189,7 @@ const removeExercise = (exercise) => {
         </div>
       </div>
 
+      <!-- Can only add exercises if a workout is active -->
       <div v-if="workoutStore.workoutActive">
         <button
           @click="addNewExercise()"
@@ -202,7 +204,6 @@ const removeExercise = (exercise) => {
 </template>
 
 <style scoped>
-/* Adjust layout for mobile screens */
 @media (max-width: 640px) {
   .w-16 {
     width: 50px;

@@ -31,13 +31,12 @@ const login = async () => {
 
     if (response.ok && data.token) {
       // If the response is OK and we have a token, save the token and update the store
-      localStorage.setItem("token", data.token);
+      authStore.setUserId(data.userId);
       authStore.setToken(data.token);
 
       // Redirect the user to the dashboard or any other page after login
       router.push("/");
     } else {
-      // Log an error message if credentials are invalid or token is missing
       console.error("Login failed:", data.message || "No token provided");
     }
   } catch (error) {

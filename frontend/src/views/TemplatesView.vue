@@ -6,6 +6,7 @@ import { useAuthStore } from "@/stores/authStore";
 const authStore = useAuthStore();
 
 // initialize exercises with independent sets for each exercise
+// Hard coded data for now until implementation
 const templates = ref([
   {
     id: Math.random(),

@@ -1,9 +1,13 @@
 <script setup>
 import { PhBicycle, PhTrendUp, PhPlus, PhBarbell } from "@phosphor-icons/vue";
+import { useWorkoutStore } from "@/stores/workoutStore";
+
+const workoutStore = useWorkoutStore();
 </script>
 
 <template>
   <nav
+    v-if="!workoutStore.currentWorkout"
     class="floating-nav flex justify-around w-11/12 bg-zinc-950 rounded-full shadow-xl"
   >
     <RouterLink
@@ -38,6 +42,8 @@ import { PhBicycle, PhTrendUp, PhPlus, PhBarbell } from "@phosphor-icons/vue";
       <span class="text-sm text-white">Exercises</span>
     </RouterLink>
   </nav>
+
+  <div v-else></div>
 </template>
 
 <style scoped>
