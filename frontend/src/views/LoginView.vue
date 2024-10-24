@@ -45,7 +45,12 @@ const login = async () => {
 </script>
 
 <template>
-  <div role="alert" class="alert alert-warning">
+  <div
+    :key="errorAlert"
+    v-if="errorAlert === true"
+    role="alert"
+    class="alert alert-warning"
+  >
     <svg
       xmlns="http://www.w3.org/2000/svg"
       class="h-6 w-6 shrink-0 stroke-current"
@@ -87,15 +92,17 @@ const login = async () => {
         </div>
         <button
           type="submit"
-          class="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition-colors"
+          class="w-full bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 transition-colors"
         >
           Login
         </button>
       </form>
-      <div class="">
+      <p class="mt-6">
         New User? Create an account
-        <RouterLink to="/register">here</RouterLink>.
-      </div>
+        <RouterLink to="/register"
+          ><span class="font-bold text-blue-500">here</span></RouterLink
+        >.
+      </p>
     </div>
   </div>
 </template>

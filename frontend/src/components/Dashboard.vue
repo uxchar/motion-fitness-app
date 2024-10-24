@@ -59,11 +59,13 @@ onMounted(() => {
     </div>
 
     <h2 class="mt-32 mb-4">Your Workout History</h2>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
+    <div
+      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full transition"
+    >
       <div
         v-for="workout in workoutStore.workouts"
         :key="workout.workout_id"
-        class="mb-6 p-4 bg-zinc-900 text-zinc-50 rounded-lg"
+        class="mb-6 p-4 bg-zinc-900 text-zinc-50 rounded-lg hover:bg-gray-400 hover:text-zinc-900 hover:shadow-slate-600 hover:shadow-md"
       >
         <div class="flex justify-between">
           <span class="text-sm mb-3">{{ formatDate(workout.start) }}</span>
@@ -77,7 +79,7 @@ onMounted(() => {
             />
             <ul
               tabindex="0"
-              class="dropdown-content menu bg-gray-400 text-black rounded-box w-52 p-2 shadow"
+              class="dropdown-content menu bg-zinc-900 text-zinc-50 rounded-box w-52 p-2 shadow"
             >
               <li @click="openModal(workout)"><a>Edit</a></li>
               <li @click="workoutStore.deleteWorkout(workout.workout_id)">
