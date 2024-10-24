@@ -59,59 +59,66 @@ const register = async () => {
     </svg>
     <span>Warning: Invalid email address or password!</span>
   </div> -->
-  <div class="min-h-screen flex items-center justify-center bg-gray-100">
-    <div class="bg-white p-8 rounded-lg w-80">
-      <h2 class="text-2xl font-bold mb-4 text-center">Register</h2>
-      <form @submit.prevent="register">
-        <div class="mb-4">
-          <label class="block text-gray-700 mb-2" for="name">First Name:</label>
-          <input
-            type="text"
-            v-model="name"
-            id="name"
-            class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-red-500"
-          />
-        </div>
-        <div class="">
-          <label class="block text-gray-700 mb-2" for="email">Email</label>
-          <input
-            type="text"
-            v-model="email"
-            id="email"
-            class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-red-500"
-          />
-        </div>
-        <div class="mb-4">
-          <label class="block text-gray-700 mb-2" for="password"
-            >Password</label
-          >
-          <input
-            type="password"
-            v-model="password"
-            id="password"
-            class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-red-500"
-          />
-        </div>
-        <div class="mb-4">
-          <label class="block text-gray-700 mb-2" for="confirmedPassword"
-            >Confirm Password</label
-          >
-          <input
-            type="password"
-            v-model="confirmedPassword"
-            id="confirmedPassword"
-            class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-red-500"
-          />
-        </div>
+  <div class="max-h-screen flex items-center justify-center bg-gray-100">
+    <div class="">
+      <div class="text-center mb-8 text-4xl font-black">
+        <span>Motion</span>
+      </div>
+      <div class="bg-white p-8 rounded-lg w-80 mb-10">
+        <h2 class="text-2xl font-bold mb-4 text-center">Register</h2>
+        <form @submit.prevent="register">
+          <div class="mb-4">
+            <label class="block text-gray-700 mb-2" for="name"
+              >First Name:</label
+            >
+            <input
+              type="text"
+              v-model="name"
+              id="name"
+              class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-red-500"
+            />
+          </div>
+          <div class="">
+            <label class="block text-gray-700 mb-2" for="email">Email</label>
+            <input
+              type="text"
+              v-model="email"
+              id="email"
+              class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-red-500"
+            />
+          </div>
+          <div class="mb-4">
+            <label class="block text-gray-700 mb-2" for="password"
+              >Password</label
+            >
+            <input
+              type="password"
+              v-model="password"
+              id="password"
+              class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-red-500"
+            />
+          </div>
+          <div class="mb-4">
+            <label class="block text-gray-700 mb-2" for="confirmedPassword"
+              >Confirm Password</label
+            >
+            <input
+              type="password"
+              v-model="confirmedPassword"
+              id="confirmedPassword"
+              class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-red-500"
+            />
+          </div>
 
-        <button
-          type="submit"
-          class="w-full bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 transition-colors"
-        >
-          Register
-        </button>
-      </form>
-      <div class=""></div>
+          <button
+            type="submit"
+            class="w-full bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 transition-colors"
+          >
+            Register
+          </button>
+        </form>
+        <div class=""></div>
+      </div>
     </div>
   </div>
 </template>

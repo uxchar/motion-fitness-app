@@ -134,7 +134,7 @@ const filteredExercises = computed(() => {
           type="text"
           placeholder="Search exercises"
           v-model="searchQuery"
-          class="h-12 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-stone-100 dark:border-gray-600 dark:placeholder-gray-500 dark:text-grey dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          class="h-12 text-gray-900 text-sm rounded-lg focus:ring-red-500 focus:border-red-500 block w-full p-2.5 dark:bg-stone-100 dark:border-gray-600 dark:placeholder-gray-500 dark:text-grey dark:focus:ring-red-500 dark:focus:border-red-500"
         />
       </div>
 
@@ -148,7 +148,7 @@ const filteredExercises = computed(() => {
           @click="toggleTarget(target)"
           :class="{
             'bg-red-500 text-white': selectedTarget === target,
-            'bg-gray-500 text-white': selectedTarget !== target,
+            'bg-gray-300 text-zinc-900': selectedTarget !== target,
           }"
         >
           {{ target }}
@@ -165,7 +165,7 @@ const filteredExercises = computed(() => {
           @click="toggleEquipment(equipment)"
           :class="{
             'bg-red-500 text-white': selectedEquipment === equipment,
-            'bg-gray-500 text-white': selectedEquipment !== equipment,
+            'bg-gray-300 text-zinc-900': selectedEquipment !== equipment,
           }"
         >
           {{ equipment }}

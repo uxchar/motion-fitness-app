@@ -58,21 +58,21 @@ onMounted(() => {
       </div>
     </div>
 
-    <h2 class="mt-32 mb-4">Your Workout History</h2>
+    <h2 class="mt-32 mb-4 text-lg font-medium">Your Workout History</h2>
     <div
       class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full transition"
     >
       <div
         v-for="workout in workoutStore.workouts"
         :key="workout.workout_id"
-        class="mb-6 p-4 bg-zinc-900 text-zinc-50 rounded-lg hover:bg-gray-400 hover:text-zinc-900 hover:shadow-slate-600 hover:shadow-md"
+        class="mb-6 p-4 bg-zinc-900 text-zinc-50 rounded-lg hover:bg-gray-300 hover:text-zinc-900 hover:shadow-slate-600 hover:shadow-md"
       >
         <div class="flex justify-between">
           <span class="text-sm mb-3">{{ formatDate(workout.start) }}</span>
           <div class="dropdown dropdown-end">
             <PhDotsThreeOutlineVertical
               :size="16"
-              color="#fafafa"
+              color="#949494"
               weight="fill"
               tabindex="0"
               role="button"
@@ -107,7 +107,7 @@ onMounted(() => {
             <div class="w-16 text-sm">{{ set.reps }} reps</div>
             <div class="w-24 text-sm">{{ set.weight }} lbs</div>
             <div v-if="set.complete">
-              <PhCheckCircle :size="16" color="#fafafa" weight="fill" />
+              <PhCheckCircle :size="16" color="#e13d3d" weight="fill" />
             </div>
             <div v-else class="w-6 h-6"></div>
           </div>
