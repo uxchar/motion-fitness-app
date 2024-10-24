@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/authStore";
 
 const router = useRouter();
@@ -8,6 +8,7 @@ const router = useRouter();
 const email = ref("");
 const password = ref("");
 const authStore = useAuthStore();
+const errorAlert = ref(false);
 
 const params = {
   method: "POST",
@@ -18,40 +19,54 @@ const params = {
 };
 
 const login = async () => {
-  try {
-    const response = await fetch("http://localhost:3000/login", {
-      ...params,
-      body: JSON.stringify({ email: email.value, password: password.value }),
-    });
+  console.log(errorAlert.value);
 
-    const data = await response.json();
+  const response = await fetch("http://localhost:3000/login", {
+    ...params,
+    body: JSON.stringify({ email: email.value, password: password.value }),
+  });
 
-    console.log("Response status:", response.status);
-    console.log("Response data:", data);
+  const data = await response.json();
 
-    if (response.ok && data.token) {
-      // If the response is OK and we have a token, save the token and update the store
-      authStore.setUserId(data.userId);
-      authStore.setToken(data.token);
+  console.log("Response data:", data);
 
-      // Redirect the user to the dashboard or any other page after login
-      router.push("/");
-    } else {
-      console.error("Login failed:", data.message || "No token provided");
-    }
-  } catch (error) {
-    console.error("Error during login:", error);
+  if (response.ok && data.token) {
+    // If the response is OK and we have a token, save the token and update the store
+    authStore.setUserId(data.userId);
+    authStore.setToken(data.token);
+
+    // Redirect the user to the dashboard or any other page after login
+    router.push("/");
+  } else {
+    errorAlert.value = true;
+    console.log("error");
   }
 };
 </script>
 
 <template>
+  <div role="alert" class="alert alert-warning">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="h-6 w-6 shrink-0 stroke-current"
+      fill="none"
+      viewBox="0 0 24 24"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+      />
+    </svg>
+    <span>Warning: Invalid email address or password!</span>
+  </div>
   <div class="min-h-screen flex items-center justify-center bg-gray-100">
     <div class="bg-white p-8 rounded-lg w-80">
       <h2 class="text-2xl font-bold mb-4 text-center">Login</h2>
       <form @submit.prevent="login">
         <div class="mb-4">
-          <label class="block text-gray-700 mb-2" for="username">Email</label>
+          <label class="block text-gray-700 mb-2" for="email">Email</label>
           <input
             type="text"
             v-model="email"
@@ -77,6 +92,10 @@ const login = async () => {
           Login
         </button>
       </form>
+      <div class="">
+        New User? Create an account
+        <RouterLink to="/register">here</RouterLink>.
+      </div>
     </div>
   </div>
 </template>

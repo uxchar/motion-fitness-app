@@ -10,7 +10,13 @@ const workoutStore = useWorkoutStore();
 const authStore = useAuthStore();
 
 const date = new Date();
-const formattedDate = date.toLocaleDateString();
+const formattedDate = date.toLocaleDateString("en-US", {
+  timeZone: "America/New_York",
+});
+
+onMounted(() => {
+  workoutStore.loadFromLocalStorage();
+});
 
 const startWorkout = () => {
   workoutStore.startWorkout();
@@ -19,7 +25,7 @@ const startWorkout = () => {
 
 const finishWorkout = () => {
   workoutStore.finishWorkout();
-  console.log("Workout endd at:", workoutStore.finishTime);
+  console.log("Workout finished at:", workoutStore.finishTime);
 };
 
 const cancelWorkout = () => {
@@ -51,21 +57,25 @@ const addSet = (exerciseId) => {
     weight: 0,
     complete: false,
   };
+
+  workoutStore.saveToLocalStorage();
 };
 
 const removeSet = (exerciseId, setNumber) => {
   workoutStore.removeSet(exerciseId, setNumber);
+  workoutStore.saveToLocalStorage();
 };
 
 const removeExercise = (exercise) => {
   workoutStore.removeExercise(exercise.id);
+  workoutStore.saveToLocalStorage();
   console.log(workoutStore);
 };
 </script>
 
 <template>
   <div v-if="authStore.token">
-    <div class="">
+    <div>
       <div class="flex justify-between">
         <h1 class="text-4xl font-medium mt-2.5 mb-10">Active Workout</h1>
       </div>
@@ -114,7 +124,7 @@ const removeExercise = (exercise) => {
             </button>
           </div>
 
-          <!-- Ror each set added to exercises, set up form for each set -->
+          <!-- For each set added to exercises, set up form for each set -->
           <div v-for="set in exercise.sets" :key="set.set_number" class="mb-2">
             <div class="flex flex-row justify-between items-center gap-4">
               <!-- Set number -->
@@ -148,7 +158,7 @@ const removeExercise = (exercise) => {
 
               <div class="flex flex-col w-24">
                 <label class="text-black text-sm text-center"
-                  >Weight(lbs)</label
+                  >Weight (lbs)</label
                 >
                 <input
                   v-model="set.weight"
@@ -178,8 +188,8 @@ const removeExercise = (exercise) => {
               </div>
             </div>
           </div>
-          <!-- New set button -->
 
+          <!-- New set button -->
           <button
             class="w-full mt-2 bg-zinc-700 hover:bg-zinc-900 text-white p-2 rounded"
             @click="addSet(exercise.id)"
@@ -192,7 +202,6 @@ const removeExercise = (exercise) => {
       <!-- Can only add exercises if a workout is active -->
       <div v-if="workoutStore.workoutActive">
         <button
-          @click="addNewExercise()"
           class="flex bg-zinc-800 hover:bg-zinc-950 text-white p-2 rounded mt-7 mx-auto mb-20"
         >
           <RouterLink to="/exercises"> Add New Exercise </RouterLink>
@@ -202,17 +211,3 @@ const removeExercise = (exercise) => {
   </div>
   <div v-else class="p-4"><p>Must login create active workout</p></div>
 </template>
-
-<style scoped>
-@media (max-width: 640px) {
-  .w-16 {
-    width: 50px;
-  }
-  .w-20 {
-    width: 60px;
-  }
-  .w-24 {
-    width: 80px;
-  }
-}
-</style>

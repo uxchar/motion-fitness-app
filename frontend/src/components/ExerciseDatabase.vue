@@ -1,13 +1,18 @@
 <script setup>
 import { useWorkoutStore } from "@/stores/workoutStore";
 import { useAuthStore } from "@/stores/authStore";
-
 import { ref, onMounted, computed } from "vue";
-import { PhPlusCircle, PhCheckCircle } from "@phosphor-icons/vue";
+import {
+  PhPlusCircle,
+  PhCheckCircle,
+  PhArrowCircleLeft,
+} from "@phosphor-icons/vue";
+import { useRouter } from "vue-router";
 
 const workoutStore = useWorkoutStore();
 const authStore = useAuthStore();
-// Initialize exercises and selectedExercises
+const router = useRouter();
+
 const exercises = ref([]);
 const searchQuery = ref("");
 const selectedTarget = ref("");
@@ -15,7 +20,6 @@ const selectedEquipment = ref("");
 
 const url = "http://localhost:3000/api/data";
 
-// Use onMounted to fetch data after the component is mounted
 onMounted(async () => {
   try {
     const response = await fetch(url);
@@ -24,57 +28,54 @@ onMounted(async () => {
     } else if (response.ok && authStore.token != null) {
       const result = await response.json();
       exercises.value = result;
-      console.log(result);
     }
   } catch (error) {
     console.error("Error fetching exercises:", error);
   }
 });
+
 const addToWorkout = (exercise) => {
-  console.log(exercise);
-  if (workoutStore.workoutActive === false) {
+  if (!workoutStore.workoutActive) {
     alert(
       "Cannot add exercise, there is currently no active workout in progress."
     );
+    return;
+  }
+
+  if (isExerciseAdded(exercise)) {
+    workoutStore.removeExercise(exercise.id);
   } else {
     workoutStore.addExercise(exercise);
   }
-  console.log(workoutStore);
 };
 
+// Check if an exercise is added to the workout
 const isExerciseAdded = (exercise) => {
   return workoutStore.selectedExercises.some(
     (clickedExercise) => clickedExercise.id === exercise.id
   );
 };
 
+// Filter and toggle logic
 const toggleTarget = (target) => {
-  if (selectedTarget.value === target) {
-    selectedTarget.value = "";
-  } else {
-    selectedTarget.value = target;
-  }
+  selectedTarget.value = selectedTarget.value === target ? "" : target;
 };
 
 const toggleEquipment = (equipment) => {
-  if (selectedEquipment.value === equipment) {
-    selectedEquipment.value = "";
-  } else {
-    selectedEquipment.value = equipment;
-  }
+  selectedEquipment.value =
+    selectedEquipment.value === equipment ? "" : equipment;
 };
 
-// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set
-// https://vuejs.org/guide/essentials/computed.html
-
-//All exercises are mapped over and Set prevents duplicates, returning array with unique values
+// Unique targets and equipment filters
 const uniqueTargets = computed(() => {
   return [...new Set(exercises.value.map((exercise) => exercise.target))];
 });
+
 const uniqueEquipment = computed(() => {
   return [...new Set(exercises.value.map((exercise) => exercise.equipment))];
 });
 
+// Filter exercises based on search query, target, and equipment
 const filteredExercises = computed(() => {
   let filtered = exercises.value.filter((exercise) =>
     exercise.name.toLowerCase().includes(searchQuery.value.toLowerCase())
@@ -115,11 +116,18 @@ const filteredExercises = computed(() => {
       </svg>
       <span>Workout must be in progress to add exercises.</span>
     </div>
+    <RouterLink to="/workout">
+      <button
+        class="fixed top-4 left-4 bg-red-500 text-black p-2 rounded-full shadow-lg hover:bg-red-600 transition"
+      >
+        <PhArrowCircleLeft :size="34" weight="bold" />
+      </button>
+    </RouterLink>
     <h1 class="text-4xl font-medium mt-10 mb-10 md:text-center">
       Exercise List
     </h1>
 
-    <!-- Search bar  -->
+    <!-- Search bar -->
     <div class="flex flex-col justify-center items-center p-6">
       <div class="mb-6 w-full max-w-lg">
         <input
@@ -139,8 +147,8 @@ const filteredExercises = computed(() => {
           :key="target"
           @click="toggleTarget(target)"
           :class="{
-            'bg-green-500 text-white': selectedTarget === target,
-            'bg-black text-white': selectedTarget !== target,
+            'bg-red-500 text-white': selectedTarget === target,
+            'bg-gray-500 text-white': selectedTarget !== target,
           }"
         >
           {{ target }}
@@ -156,14 +164,15 @@ const filteredExercises = computed(() => {
           :key="equipment"
           @click="toggleEquipment(equipment)"
           :class="{
-            'bg-green-500 text-white': selectedEquipment === equipment,
-            'bg-black text-white': selectedEquipment !== equipment,
+            'bg-red-500 text-white': selectedEquipment === equipment,
+            'bg-gray-500 text-white': selectedEquipment !== equipment,
           }"
         >
           {{ equipment }}
         </button>
       </div>
 
+      <!-- Exercise list -->
       <div
         class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full mt-20"
       >
@@ -179,7 +188,8 @@ const filteredExercises = computed(() => {
             <div class="text-sm">{{ exercise.target }}</div>
             <div class="text-sm">{{ exercise.equipment }}</div>
           </div>
-          <!-- If button is unclicked show plus icon, else show check icon -->
+
+          <!-- Toggle icon between plus and check -->
           <button @click="addToWorkout(exercise)">
             <PhPlusCircle
               v-if="!isExerciseAdded(exercise)"
@@ -187,17 +197,14 @@ const filteredExercises = computed(() => {
               color="#0c0a09"
               weight="fill"
             />
-            <PhCheckCircle v-else :size="36" color="#7ff27d" weight="fill" />
+            <PhCheckCircle v-else :size="36" color="#FD3F3F" weight="fill" />
           </button>
         </div>
       </div>
     </div>
-    <div class="join">
-      <button class="join-item btn">1</button>
-      <button class="join-item btn btn-active">2</button>
-      <button class="join-item btn">3</button>
-      <button class="join-item btn">4</button>
-    </div>
   </div>
-  <div v-else class="p-4"><p>Must login to view exercises list</p></div>
+
+  <div v-else class="p-4">
+    <p>Must login to view exercises list</p>
+  </div>
 </template>

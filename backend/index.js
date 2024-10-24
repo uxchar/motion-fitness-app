@@ -58,6 +58,25 @@ app.post("/login", async (req, res) => {
   }
 });
 
+//Register Route
+app.post("/register", async (req, res) => {
+  const { name, email, password } = req.body;
+
+  try {
+    const result = await pool.query(
+      "INSERT INTO users (name, email, password)  VALUES ($1, $2, $3)",
+      [name, email, password]
+    );
+
+    res.json("User registered successfully");
+  } catch (error) {
+    console.error("Error during registration:", error);
+    res
+      .status(500)
+      .json({ message: "Error during registration. Please try again later." });
+  }
+});
+
 // External API Data Fetch
 app.get("/api/data", async (req, res) => {
   try {
@@ -223,6 +242,7 @@ app.post("/workout/:userId", async function (req, res) {
 //Delete previous workout route
 app.delete("/workouts/:userId/:workoutId", async (req, res) => {
   const { userId, workoutId } = req.params;
+  console.log(userId, workoutId);
   try {
     await pool.query(`DELETE FROM workouts WHERE id = $1 AND user_id = $2`, [
       workoutId,

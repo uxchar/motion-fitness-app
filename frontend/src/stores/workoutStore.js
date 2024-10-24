@@ -1,4 +1,4 @@
-import { defineStore, storeToRefs } from "pinia";
+import { defineStore } from "pinia";
 import { useAuthStore } from "./authStore";
 
 export const useWorkoutStore = defineStore("workoutStore", {
@@ -13,6 +13,7 @@ export const useWorkoutStore = defineStore("workoutStore", {
     currentWorkout: null,
   }),
   actions: {
+    // Fetch previous workouts for the dashboard
     getPreviousWorkouts() {
       const authStore = useAuthStore();
 
@@ -21,9 +22,10 @@ export const useWorkoutStore = defineStore("workoutStore", {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
-          Authorization: `Bearer {authStore.token}`,
+          Authorization: `Bearer ${authStore.token}`,
         },
       };
+
       const fetchWorkouts = async () => {
         try {
           const response = await fetch(
@@ -39,12 +41,34 @@ export const useWorkoutStore = defineStore("workoutStore", {
       };
       fetchWorkouts();
     },
+
+    // Load workout from local storage
+    loadFromLocalStorage() {
+      const storedExercises = JSON.parse(
+        localStorage.getItem("selectedExercises")
+      );
+      if (storedExercises) {
+        this.selectedExercises = storedExercises;
+      }
+    },
+
+    // Save workout to local storage
+    saveToLocalStorage() {
+      localStorage.setItem(
+        "selectedExercises",
+        JSON.stringify(this.selectedExercises)
+      );
+    },
+
+    // Start workout
     startWorkout() {
       this.workoutActive = true;
       this.startTime = new Date();
       localStorage.setItem("workoutActive", true);
       localStorage.setItem("startTime", this.startTime);
     },
+
+    // Finish workout and send to backend
     finishWorkout() {
       const authStore = useAuthStore();
       this.workoutActive = false;
@@ -61,7 +85,7 @@ export const useWorkoutStore = defineStore("workoutStore", {
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
-          Authorization: `Bearer {authStore.token}`,
+          Authorization: `Bearer ${authStore.token}`,
         },
         body: JSON.stringify(workoutData),
       })
@@ -75,63 +99,32 @@ export const useWorkoutStore = defineStore("workoutStore", {
         });
     },
 
-    deleteWorkout() {
-      const options = {
-        method: "DELETE",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      };
-
-      const removeWorkout = async (workoutId) => {
-        const authStore = useAuthStore();
-
-        try {
-          const response = await fetch(
-            `http://localhost:3000/workouts/${authStore.userId}/${workoutId}`,
-            options
-          );
-          response.status = "Delete successful";
-        } catch (error) {
-          console.error("Error deleting workout:", error);
-        }
-      };
-      removeWorkout();
-    },
-    resetWorkout() {
-      this.selectedExercises = [];
-      this.startTime = null;
-      this.finishTime = null;
-      this.workoutActive = false;
-
-      localStorage.removeItem("selectedExercises");
-      localStorage.removeItem("startTime");
-      localStorage.removeItem("finishTime");
-      localStorage.removeItem("workoutActive");
-    },
-    setCurrentWorkout(workout) {
-      this.currentWorkout = workout;
-    },
-
+    // Add exercise to workout
     addExercise(newExercise) {
       const exercise = this.selectedExercises.find(
         (exercise) => exercise.id === newExercise.id
       );
       if (exercise) {
-        alert("Exercise already exist in active workout");
+        alert("Exercise already exists in the active workout");
         return;
       } else {
         this.selectedExercises.push({
           ...newExercise,
           sets: [],
         });
-        localStorage.setItem(
-          "selectedExercises",
-          JSON.stringify(this.currentWorkout)
-        );
+        this.saveToLocalStorage();
       }
     },
+
+    // Remove exercise from workout
+    removeExercise(exerciseId) {
+      this.selectedExercises = this.selectedExercises.filter(
+        (exercise) => exercise.id != exerciseId
+      );
+      this.saveToLocalStorage();
+    },
+
+    // Add set to exercise
     addSetToExercise(exerciseId, newSet) {
       const exercise = this.selectedExercises.find(
         (exercise) => exercise.id === exerciseId
@@ -139,21 +132,11 @@ export const useWorkoutStore = defineStore("workoutStore", {
       if (exercise) {
         newSet.set_number = exercise.sets.length + 1;
         exercise.sets.push(newSet);
-        localStorage.setItem(
-          "selectedExercises",
-          JSON.stringify(this.selectedExercises)
-        );
+        this.saveToLocalStorage();
       }
     },
-    removeExercise(exerciseId) {
-      this.selectedExercises = this.selectedExercises.filter(
-        (exercise) => exercise.id != exerciseId
-      );
-      localStorage.setItem(
-        "selectedExercises",
-        JSON.stringify(this.selectedExercises)
-      );
-    },
+
+    // Remove set from exercise
     removeSet(exerciseId, setNumber) {
       const exercise = this.selectedExercises.find(
         (exercise) => exercise.id === exerciseId
@@ -165,12 +148,29 @@ export const useWorkoutStore = defineStore("workoutStore", {
         exercise.sets.forEach((set, index) => {
           set.set_number = index + 1;
         });
-        localStorage.setItem(
-          "selectedExercises",
-          JSON.stringify(this.selectedExercises)
-        );
+        this.saveToLocalStorage();
       }
     },
+
+    // Reset workout
+    resetWorkout() {
+      this.selectedExercises = [];
+      this.startTime = null;
+      this.finishTime = null;
+      this.workoutActive = false;
+
+      localStorage.removeItem("selectedExercises");
+      localStorage.removeItem("startTime");
+      localStorage.removeItem("finishTime");
+      localStorage.removeItem("workoutActive");
+    },
+
+    // Set the current workout (for editing)
+    setCurrentWorkout(workout) {
+      this.currentWorkout = workout;
+    },
+
+    // Update a workout on the server
     async updateWorkout(updatedWorkout) {
       const authStore = useAuthStore();
 
@@ -185,7 +185,6 @@ export const useWorkoutStore = defineStore("workoutStore", {
       };
 
       try {
-        console.log(authStore.userId, updatedWorkout.workout_id);
         const response = await fetch(
           `http://localhost:3000/workouts/${authStore.userId}/${updatedWorkout.workout_id}`,
           options
@@ -199,6 +198,34 @@ export const useWorkoutStore = defineStore("workoutStore", {
         console.log("Workout updated successfully", data);
       } catch (error) {
         console.error("Error updating workout:", error);
+      }
+    },
+
+    // Delete a workout from the server
+    deleteWorkout(workoutId) {
+      const options = {
+        method: "DELETE",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      };
+
+      const removeWorkout = async () => {
+        const authStore = useAuthStore();
+
+        await fetch(
+          `http://localhost:3000/workouts/${authStore.userId}/${workoutId}`,
+          options
+        );
+
+        this.workouts = this.workouts.filter(
+          (workout) => workout.workout_id !== workoutId
+        );
+      };
+
+      if (workoutId) {
+        removeWorkout();
       }
     },
   },

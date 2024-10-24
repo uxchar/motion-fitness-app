@@ -1,45 +1,67 @@
 <script setup>
 import { PhBicycle, PhTrendUp, PhPlus, PhBarbell } from "@phosphor-icons/vue";
 import { useWorkoutStore } from "@/stores/workoutStore";
+import { useRoute } from "vue-router";
 
 const workoutStore = useWorkoutStore();
+const route = useRoute();
 </script>
 
 <template>
   <nav
     v-if="!workoutStore.currentWorkout"
-    class="floating-nav flex justify-around w-11/12 bg-zinc-950 rounded-full shadow-xl"
+    class="floating-nav flex justify-around sm:w-12/12 md:w-11/12 bg-zinc-950 rounded-full shadow-xl"
   >
+    <!-- Dashboard Link -->
     <RouterLink
       to="/"
-      class="flex flex-col items-center space-y-1 hover:bg-sky-700 rounded-3xl p-4"
+      class="flex flex-col items-center space-y-1 p-4 rounded-2xl"
+      :class="{
+        'bg-red-700': route.path === '/',
+        'hover:bg-red-700': route.path !== '/',
+      }"
     >
-      <PhTrendUp :size="26" weight="fill" color="white" />
-      <span class="text-sm text-white">Dashboard</span>
+      <PhTrendUp :size="20" weight="fill" color="white" />
+      <span class="text-xs md:text-sm text-white">Dashboard</span>
     </RouterLink>
 
+    <!-- Templates Link -->
     <RouterLink
       to="/templates"
-      class="flex flex-col items-center space-y-1 hover:bg-sky-700 rounded-3xl p-4"
+      class="flex flex-col items-center space-y-1 p-4 rounded-2xl"
+      :class="{
+        'bg-red-700': route.path === '/templates',
+        'hover:bg-red-700': route.path !== '/templates',
+      }"
     >
-      <PhPlus :size="26" weight="fill" color="white" />
-      <span class="text-sm text-white">Templates</span>
+      <PhPlus :size="20" weight="fill" color="white" />
+      <span class="text-xs md:text-sm text-white">Templates</span>
     </RouterLink>
 
+    <!-- Workout Link -->
     <RouterLink
       to="/workout"
-      class="flex flex-col items-center space-y-1 hover:bg-sky-700 rounded-3xl p-4"
+      class="flex flex-col items-center space-y-1 p-4 rounded-2xl"
+      :class="{
+        'bg-red-700': route.path === '/workout',
+        'hover:bg-red-700': route.path !== '/workout',
+      }"
     >
-      <PhBicycle :size="26" weight="fill" color="white" />
-      <span class="text-sm text-white">Workout</span>
+      <PhBicycle :size="20" weight="fill" color="white" />
+      <span class="text-xs md:text-sm text-white">Workout</span>
     </RouterLink>
 
+    <!-- Exercises Link -->
     <RouterLink
       to="/exercises"
-      class="flex flex-col items-center space-y-1 hover:bg-sky-700 rounded-3xl p-4"
+      class="flex flex-col items-center space-y-1 p-4 rounded-2xl"
+      :class="{
+        'bg-red-700': route.path === '/exercises',
+        'hover:bg-red-700': route.path !== '/exercises',
+      }"
     >
-      <PhBarbell :size="26" weight="fill" color="white" />
-      <span class="text-sm text-white">Exercises</span>
+      <PhBarbell :size="20" weight="fill" color="white" />
+      <span class="text-xs md:text-sm text-white">Exercises</span>
     </RouterLink>
   </nav>
 

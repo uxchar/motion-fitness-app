@@ -36,11 +36,6 @@ const addNewTemplate = () => {
   <div v-if="authStore.token">
     <div class="flex w-full justify-between items-center">
       <h2 class="text-4xl font-medium mt-2.5 mb-10">Your Templates</h2>
-      <button>
-        <!-- <RouterLink> -->
-        <PhPlusCircle :size="32" color="#0c0a09" weight="fill" />
-        <!-- </RouterLink> -->
-      </button>
     </div>
 
     <div
