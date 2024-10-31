@@ -8,7 +8,7 @@ import { useWorkoutStore } from "@/stores/workoutStore";
 
 const workoutStore = useWorkoutStore();
 const authStore = useAuthStore();
-const username = "User";
+const username = "Chauncey";
 
 const isModalOpen = ref(false);
 

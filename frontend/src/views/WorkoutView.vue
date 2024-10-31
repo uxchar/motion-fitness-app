@@ -139,10 +139,10 @@ const removeExercise = (exercise) => {
                   v-model="set.set_type"
                   class="border rounded bg-gray-100 text-black p-1 text-center"
                 >
-                  <option selected value="warmup">W</option>
-                  <option value="failure">F</option>
-                  <option value="dropset">D</option>
-                  <option value="regular">R</option>
+                  <option selected value="warmup">Warmup</option>
+                  <option value="failure">Failure</option>
+                  <option value="dropset">Dropset</option>
+                  <option value="regular">Regular</option>
                 </select>
               </div>
 
