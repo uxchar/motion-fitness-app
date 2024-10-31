@@ -1,12 +1,12 @@
 # Motion App
 
 <p align="center">
-  <img src="./frontend/src/assets/screens/Screenshot%202024-10-30%20at%208.55.54 PM.png" alt="Motion Login Screen" width="250" style="margin: 10px;">
-  <img src="./frontend/src/assets/screens/Screenshot%202024-10-30%20at%208.56.30 PM.png" alt="Motion Login Screen" width="250" style="margin: 10px;">
-  <img src="./frontend/src/assets/screens/Screenshot%202024-10-30%20at%208.56.46 PM.png" alt="Motion Login Screen" width="250" style="margin: 10px;">
+  <img src="./frontend/src/assets/screens/Screenshot%202024-10-30%20at%208.55.54 PM.png" alt="Motion Login Screen" width="200" style="margin: 10px;">
+  <img src="./frontend/src/assets/screens/Screenshot%202024-10-30%20at%208.56.30 PM.png" alt="Motion Login Screen" width="200" style="margin: 10px;">
+  <img src="./frontend/src/assets/screens/Screenshot%202024-10-30%20at%208.56.46 PM.png" alt="Motion Login Screen" width="200" style="margin: 10px;">
 </p>
 
-**Motion App** is a fitness tracking application built with Vue.js, Express.js, & SQL. Designed as a final project for a software engineering program at **Humana XCA**, this app was developed to combine my passion for fitness with my dedication to creating impactful software. Motion App enables users to create and manage workouts, track sets, reps, weights, and view workout history. The app also includes a custom exercise database, workout templates for quick starts (work in progess), and easy access to exercise list.
+**Motion App** is a fitness tracking web application built with Vue.js, Express.js, & SQL. Designed as a final project for a software engineering program at **Humana XCA**, this app was developed to combine my passion for fitness with my dedication to creating impactful software. Motion App enables users to create and manage workouts, track sets, reps, weights, and view workout history. The app also includes a custom exercise database, workout templates for quick starts (work in progess), and easy access to exercise list.
 
 ## Features
 
