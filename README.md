@@ -1,12 +1,12 @@
 # Motion App
 
-<div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin-botton: 20px; ">
+<div style="display: flex; justify-content: space-evenly; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; width: 100%;">
 
-  <img src="./frontend/src/assets/screens/Screenshot%202024-10-30%20at%208.55.54 PM.png" alt="Motion Login Screen" alt="Image 1" style="max-width: 100%; width: 200px; height: auto;">
+  <img src="./frontend/src/assets/screens/Screenshot%202024-10-30%20at%208.55.54 PM.png" alt="Motion Login Screen" style="width: calc(33% - 20px); height: auto; max-width: 100%; margin-bottom: 10px;">
 
-  <img src="./frontend/src/assets/screens/Screenshot 2024-10-30 at 8.56.30 PM.png" alt="Motion Login Screen" alt="Image 2" style="max-width: 100%; width: 200px; height: auto;">
+  <img src="./frontend/src/assets/screens/Screenshot%202024-10-30%20at%208.56.30 PM.png" alt="Motion Login Screen" style="width: calc(33% - 20px); height: auto; max-width: 100%; margin-bottom: 10px;">
 
-  <img src="./frontend/src/assets/screens/Screenshot 2024-10-30 at 8.56.46 PM.png" alt="Motion Login Screen" alt="Image 3" style="max-width: 100%; width: 200px; height: auto;">
+  <img src="./frontend/src/assets/screens/Screenshot%202024-10-30%20at%208.56.46 PM.png" alt="Motion Login Screen" style="width: calc(33% - 20px); height: auto; max-width: 100%; margin-bottom: 10px;">
 
 </div>
 
