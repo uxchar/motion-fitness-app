@@ -1,6 +1,6 @@
 # Motion App
 
-<div style="display: flex; justify-content: space-evenly; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; width: 100%;">
+<div style="display: flex; justify-content: space-evenly; flex-wrap: wrap; gap: 10px; margin-bottom: 30px; width: 100%;">
 
   <img src="./frontend/src/assets/screens/Screenshot%202024-10-30%20at%208.55.54 PM.png" alt="Motion Login Screen" style="width: calc(33% - 20px); height: auto; max-width: 100%; margin-bottom: 10px;">
 
