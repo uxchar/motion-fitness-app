@@ -17,7 +17,7 @@ const pool = new Pool({
 });
 
 const corsOptions = {
-  origins: "*",
+  origins: ["motion-fitness-app.vercel.app"],
   credentials: true,
   optionSuccessStatus: 200,
 };
