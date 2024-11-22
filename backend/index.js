@@ -10,11 +10,10 @@ const Pool = require("pg").Pool;
 const app = express();
 
 const pool = new Pool({
-  user: "chauncey",
-  host: "localhost",
-  database: "motion_app",
-  password: "password",
-  port: 5432,
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false, // Required for Neon SSL connections
+  },
 });
 
 const corsOptions = {
@@ -293,7 +292,21 @@ app.put("/workouts/:userId/:workoutId", async (req, res) => {
     res.status(500).json("Server Error");
   }
 });
-// Start the server
+// Test Connection
 app.listen(3000, () => {
   console.log("Server is running on port 3000");
+});
+
+app.get("/api/test-connection", async (req, res) => {
+  try {
+    const result = await pool.query("SELECT NOW()"); // Simple query to get the current time
+    res
+      .status(200)
+      .json({ message: "Connection successful", time: result.rows[0] });
+  } catch (err) {
+    console.error("Database connection error:", err);
+    res
+      .status(500)
+      .json({ error: "Database connection failed", details: err.message });
+  }
 });
