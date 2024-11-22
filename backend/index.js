@@ -25,11 +25,12 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 const API_KEY = process.env.API_KEY;
 const JWT_SECRET = process.env.JWT_SECRET;
 
 // Login Route
-app.post("/login", async (req, res) => {
+app.post("${API_BASE_URL}/login", async (req, res) => {
   const { email, password } = req.body;
 
   try {
@@ -58,7 +59,7 @@ app.post("/login", async (req, res) => {
 });
 
 //Register Route
-app.post("/register", async (req, res) => {
+app.post("${API_BASE_URL}/register", async (req, res) => {
   const { name, email, password } = req.body;
 
   try {
@@ -77,7 +78,7 @@ app.post("/register", async (req, res) => {
 });
 
 // External API Data Fetch
-app.get("/api/data", async (req, res) => {
+app.get("${API_BASE_URL}/api/data", async (req, res) => {
   try {
     const https = require("https");
 
@@ -105,7 +106,7 @@ app.get("/api/data", async (req, res) => {
 });
 
 //Get previous workout data request
-app.get("/workouts/:userId", async (req, res) => {
+app.get("${API_BASE_URL}/workouts/:userId", async (req, res) => {
   const { userId } = req.params;
 
   try {
@@ -197,7 +198,7 @@ app.get("/workouts/:userId", async (req, res) => {
 });
 
 //Insert finished workout into the database
-app.post("/workout/:userId", async function (req, res) {
+app.post("${API_BASE_URL}/workout/:userId", async function (req, res) {
   const { userId } = req.params;
   const { exercises, startTime, finishTime } = req.body;
 
@@ -239,7 +240,7 @@ app.post("/workout/:userId", async function (req, res) {
 });
 
 //Delete previous workout route
-app.delete("/workouts/:userId/:workoutId", async (req, res) => {
+app.delete("${API_BASE_URL}/workouts/:userId/:workoutId", async (req, res) => {
   const { userId, workoutId } = req.params;
   console.log(userId, workoutId);
   try {
@@ -255,7 +256,7 @@ app.delete("/workouts/:userId/:workoutId", async (req, res) => {
 });
 
 //Update previous workout route
-app.put("/workouts/:userId/:workoutId", async (req, res) => {
+app.put("${API_BASE_URL}/workouts/:userId/:workoutId", async (req, res) => {
   const { workoutId } = req.params;
   const { exercises } = req.body;
 
@@ -298,7 +299,7 @@ app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
 
-app.get("/api/test-connection", async (req, res) => {
+app.get("${API_BASE_URL}/api/test-connection", async (req, res) => {
   try {
     const result = await pool.query("SELECT NOW()"); // Simple query to get the current time
     res
