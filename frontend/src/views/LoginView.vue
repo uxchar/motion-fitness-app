@@ -18,10 +18,12 @@ const params = {
   },
 };
 
+const url = `${import.meta.env.VITE_API_URL}`;
+
 const login = async () => {
   console.log(errorAlert.value);
 
-  const response = await fetch("http://localhost:3000/login", {
+  const response = await fetch(`${url}/login`, {
     ...params,
     body: JSON.stringify({ email: email.value, password: password.value }),
   });

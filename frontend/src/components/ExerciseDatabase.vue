@@ -18,11 +18,11 @@ const searchQuery = ref("");
 const selectedTarget = ref("");
 const selectedEquipment = ref("");
 
-const url = "http://localhost:3000/api/data";
+const url = `${import.meta.env.VITE_API_URL}`;
 
 onMounted(async () => {
   try {
-    const response = await fetch(url);
+    const response = await fetch(`${url}/api/data`);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     } else if (response.ok && authStore.token != null) {

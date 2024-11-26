@@ -16,6 +16,7 @@ export const useWorkoutStore = defineStore("workoutStore", {
     // Fetch previous workouts for the dashboard
     getPreviousWorkouts() {
       const authStore = useAuthStore();
+      const url = `${import.meta.env.VITE_API_URL}`;
 
       const params = {
         method: "GET",
@@ -29,7 +30,7 @@ export const useWorkoutStore = defineStore("workoutStore", {
       const fetchWorkouts = async () => {
         try {
           const response = await fetch(
-            `http://localhost:3000/workouts/${authStore.userId}`,
+            `${url}/workouts/${authStore.userId}`,
             params
           );
           const data = await response.json();
@@ -71,6 +72,7 @@ export const useWorkoutStore = defineStore("workoutStore", {
     // Finish workout and send to backend
     finishWorkout() {
       const authStore = useAuthStore();
+      const url = `${import.meta.env.VITE_API_URL}`;
       this.workoutActive = false;
       this.finishTime = new Date();
 
@@ -80,7 +82,7 @@ export const useWorkoutStore = defineStore("workoutStore", {
         finishTime: this.finishTime,
       };
 
-      fetch(`http://localhost:3000/workout/${authStore.userId}`, {
+      fetch(`${url}/workout/${authStore.userId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -173,6 +175,7 @@ export const useWorkoutStore = defineStore("workoutStore", {
     // Update a workout on the server
     async updateWorkout(updatedWorkout) {
       const authStore = useAuthStore();
+      const url = `${import.meta.env.VITE_API_URL}`;
 
       const options = {
         method: "PUT",
@@ -186,7 +189,7 @@ export const useWorkoutStore = defineStore("workoutStore", {
 
       try {
         const response = await fetch(
-          `http://localhost:3000/workouts/${authStore.userId}/${updatedWorkout.workout_id}`,
+          `${url}/workouts/${authStore.userId}/${updatedWorkout.workout_id}`,
           options
         );
 
@@ -203,6 +206,8 @@ export const useWorkoutStore = defineStore("workoutStore", {
 
     // Delete a workout from the server
     deleteWorkout(workoutId) {
+      const url = `${import.meta.env.VITE_API_URL}`;
+
       const options = {
         method: "DELETE",
         headers: {
@@ -215,7 +220,7 @@ export const useWorkoutStore = defineStore("workoutStore", {
         const authStore = useAuthStore();
 
         await fetch(
-          `http://localhost:3000/workouts/${authStore.userId}/${workoutId}`,
+          `${url}/workouts/${authStore.userId}/${workoutId}`,
           options
         );
 

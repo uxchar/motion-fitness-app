@@ -17,13 +17,15 @@ const params = {
   },
 };
 
+const url = `${import.meta.env.VITE_API_URL}`;
+
 const register = async () => {
   //   console.log(errorAlert.value);
   if (password.value !== confirmedPassword.value) {
     console.log("Passwords do not match.");
     throw new Error("Password do not match");
   }
-  const response = await fetch("http://localhost:3000/register", {
+  const response = await fetch(`${url}/register`, {
     ...params,
     body: JSON.stringify({
       name: name.value,
