@@ -46,7 +46,7 @@ app.post("/login", async (req, res) => {
         expiresIn: "1h",
       });
 
-      res.json({});
+      res.json({ token, userId: user.id });
     } else {
       res.status(401).json({ message: "Invalid email or password" });
     }
