@@ -21,16 +21,12 @@ const params = {
 const url = `${import.meta.env.VITE_API_URL}`;
 
 const login = async () => {
-  console.log(errorAlert.value);
-
   const response = await fetch(`${url}/login`, {
     ...params,
     body: JSON.stringify({ email: email.value, password: password.value }),
   });
 
   const data = await response.json();
-
-  console.log("Response data:", data);
 
   if (response.ok && data.token) {
     // If the response is OK and we have a token, save the token and update the store
@@ -41,7 +37,6 @@ const login = async () => {
     router.push("/");
   } else {
     errorAlert.value = true;
-    console.log("error");
   }
 };
 </script>

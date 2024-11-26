@@ -22,7 +22,6 @@ const url = `${import.meta.env.VITE_API_URL}`;
 const register = async () => {
   //   console.log(errorAlert.value);
   if (password.value !== confirmedPassword.value) {
-    console.log("Passwords do not match.");
     throw new Error("Password do not match");
   }
   const response = await fetch(`${url}/register`, {
@@ -34,12 +33,8 @@ const register = async () => {
     }),
   });
   const data = await response.json();
-  console.log("Response data:", data);
   if (data) {
-    console.log("User registered successfully.");
     router.push("/login");
-  } else {
-    console.log("error");
   }
 };
 </script>
