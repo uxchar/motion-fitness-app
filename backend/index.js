@@ -296,7 +296,7 @@ app.put("/workouts/:userId/:workoutId", async (req, res) => {
 // Test Connection
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  console.log("Database is now running.");
 });
 
 app.get("/api/test-connection", async (req, res) => {
