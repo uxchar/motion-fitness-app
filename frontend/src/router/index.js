@@ -26,12 +26,6 @@ const router = createRouter({
       component: () => import("../views/TemplatesView.vue"),
     },
     {
-      path: "/create-template",
-      name: "create-template",
-
-      component: () => import("../views/CreateTemplateView.vue"),
-    },
-    {
       path: "/workout",
       name: "workout",
 

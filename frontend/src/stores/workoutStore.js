@@ -154,8 +154,8 @@ export const useWorkoutStore = defineStore("workoutStore", {
       }
     },
 
-    // Reset workout
-    resetWorkout() {
+    // Cancel workout
+    cancelWorkout() {
       this.selectedExercises = [];
       this.startTime = null;
       this.finishTime = null;

@@ -19,13 +19,10 @@ const formatDate = (timestamp) => {
 // Open the modal when a workout is selected for editing
 const openModal = (workout) => {
   workoutStore.setCurrentWorkout(workout);
-  console.log(workout);
-  isModalOpen.value = true; // Open modal
+  isModalOpen.value = true;
 };
 
 const closeModal = () => {
-  console.log(workout);
-
   isModalOpen.value = false;
 };
 

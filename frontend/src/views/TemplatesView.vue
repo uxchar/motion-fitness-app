@@ -1,12 +1,11 @@
 <script setup>
-import { ref, onMounted } from "vue";
-import { PhPlusCircle } from "@phosphor-icons/vue";
-import { useAuthStore } from "@/stores/authStore";
+import { ref } from "vue";
+import { PhDotsThreeOutlineVertical } from "@phosphor-icons/vue";
+import CreateTemplateModal from "@/components/CreateTemplateModal.vue";
+import { useTemplateStore } from "@/stores/templateStore";
 
-const authStore = useAuthStore();
+const templateStore = useTemplateStore();
 
-// initialize exercises with independent sets for each exercise
-// Hard coded data for now until implementation
 const templates = ref([
   {
     id: Math.random(),
@@ -21,36 +20,26 @@ const templates = ref([
     dateCreated: "10-3-24",
   },
 ]);
-
-const addNewTemplate = () => {
-  templates.value.push({
-    id: Math.random(),
-    templateName: "",
-    templateNote: "",
-    dateCreated: Date.now(),
-  });
-};
 </script>
 
 <template>
-  <div v-if="authStore.token">
-    <div class="flex w-full justify-between items-center">
-      <h2 class="text-4xl font-medium mt-2.5 mb-10">Your Templates</h2>
+  <div>
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-4xl font-medium">Your Templates</h2>
     </div>
 
-    <div
-      v-for="template in templates"
-      :key="template.id"
-      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6 p-4 w-full"
-    >
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <div
-        class="flex flex-col items-center bg-zinc-950 text-zinc-50 rounded-lg py-14"
+        v-for="template in templates"
+        :key="template.id"
+        class="p-6 bg-gray-900 text-white rounded-lg shadow"
       >
-        <p class="font-semibold text-lg">{{ template.templateName }}</p>
-        <p class="text-zinc-400">{{ template.templateNote }}</p>
-        <p class="text-zinc-400">{{ template.dateCreated }}</p>
+        <h3 class="text-xl font-semibold">{{ template.templateName }}</h3>
+        <p class="text-gray-400">{{ template.templateNote }}</p>
+        <p class="text-gray-500 text-sm">{{ template.dateCreated }}</p>
       </div>
     </div>
+
+    <CreateTemplateModal />
   </div>
-  <div v-else class="p-4"><p>Must login create templates</p></div>
 </template>

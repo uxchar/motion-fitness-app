@@ -3,9 +3,7 @@ import { ref, onMounted } from "vue";
 import { useWorkoutStore } from "@/stores/workoutStore";
 import { useAuthStore } from "@/stores/authStore";
 import { PhXCircle } from "@phosphor-icons/vue";
-import { useRouter } from "vue-router";
 
-const router = useRouter();
 const workoutStore = useWorkoutStore();
 const authStore = useAuthStore();
 
@@ -29,8 +27,8 @@ const finishWorkout = () => {
 };
 
 const cancelWorkout = () => {
-  workoutStore.resetWorkout();
-  console.log("Workout reset");
+  workoutStore.cancelWorkout();
+  console.log("Workout cancelled");
 };
 
 const newSet = ref({
@@ -204,7 +202,7 @@ const removeExercise = (exercise) => {
         <button
           class="flex bg-zinc-800 hover:bg-zinc-950 text-white p-2 rounded mt-7 mx-auto mb-20"
         >
-          <RouterLink to="/exercises"> Add New Exercise </RouterLink>
+          <RouterLink to="/exercises"> Add Exercise </RouterLink>
         </button>
       </div>
     </div>
