@@ -293,10 +293,122 @@ app.put("/workouts/:userId/:workoutId", async (req, res) => {
     res.status(500).json("Server Error");
   }
 });
+
+//Get user templates data request
+app.get("/templates/:userId", async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const result = await pool.query(
+      `
+      SELECT 
+      templates.template_name,
+      templates.template_note,
+      templates.date_created,
+      templates.id AS template_id,
+      template_exercises.exercise_name,
+      template_sets.set_number,
+      template_sets.reps,
+      template_sets.weight
+    FROM 
+      templates
+    JOIN 
+      template_exercises ON templates.id = template_exercises.template_id
+    JOIN 
+      template_sets ON template_exercises.id = template_sets.template_exercise_id
+    WHERE 
+      templates.user_id = $1
+    ORDER BY 
+      template_id, template_exercises.exercise_name, template_sets.set_number;
+    `,
+      [userId]
+    );
+
+    const templates = [];
+
+    //Group data for each workout instead sending each exercise and individual set
+    result.rows.forEach((row) => {
+      let template = templates.find(
+        (templateItem) => templateItem.template_id === row.template_id
+      );
+
+      if (!template) {
+        template = {
+          template_id: row.template_id,
+          template_name: row.template_name,
+          template_note: row.template_note,
+          date_created: row.date_created,
+          exercises: [],
+        };
+
+        templates.push(template);
+      }
+
+      let exercise = template.exercises.find(
+        (exerciseItem) => exerciseItem.exercise_name === row.exercise_name
+      );
+
+      if (!exercise) {
+        exercise = {
+          exercise_name: row.exercise_name,
+          sets: [],
+        };
+        template.exercises.push(exercise);
+      }
+
+      exercise.sets.push({
+        set_number: row.set_number,
+        reps: row.reps,
+        weight: row.weight,
+      });
+    });
+    console.log(templates);
+    res.json({ templates });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json("Server Error");
+  }
+});
+
+//Insert finished template into the database
+app.post("/template/:userId", async function (req, res) {
+  const { userId } = req.params;
+  const { templateName, note, exercises, dateCreated } = req.body;
+
+  try {
+    const templateResult = await pool.query(
+      "INSERT INTO templates(user_id, template_name, template_note, date_created) VALUES ($1, $2, $3, $4) RETURNING id",
+      [userId, templateName, note, dateCreated]
+    );
+    const templateId = templateResult.rows[0].id;
+
+    for (const exercise of exercises) {
+      const exerciseResult = await pool.query(
+        "INSERT INTO template_exercises(template_id, exercise_name) VALUES ($1, $2) RETURNING id",
+        [templateId, exercise.name]
+      );
+
+      const exerciseId = exerciseResult.rows[0].id;
+
+      for (const set of exercise.sets) {
+        await pool.query(
+          "INSERT INTO template_sets(template_exercise_id, set_number, reps, weight, set_type) VALUES ($1, $2, $3, $4, $5)",
+          [exerciseId, set.set_number, set.reps, set.weight, set.set_type]
+        );
+      }
+    }
+
+    res.json("Template inserted successfully.");
+  } catch (error) {
+    console.error("Problem inserting template:", error);
+    res.status(500).send("Server Error");
+  }
+});
+
 // Test Connection
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log("Database is now running.");
+  console.log("Server is now running.");
 });
 
 app.get("/api/test-connection", async (req, res) => {
@@ -306,9 +418,9 @@ app.get("/api/test-connection", async (req, res) => {
       .status(200)
       .json({ message: "Connection successful", time: result.rows[0] });
   } catch (err) {
-    console.error("Database connection error:", err);
+    console.error("Server connection error:", err);
     res
       .status(500)
-      .json({ error: "Database connection failed", details: err.message });
+      .json({ error: "Server connection failed", details: err.message });
   }
 });
