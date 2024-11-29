@@ -8,8 +8,10 @@ import {
   PhArrowCircleLeft,
 } from "@phosphor-icons/vue";
 import { useRouter } from "vue-router";
+import { useTemplateStore } from "@/stores/templateStore";
 
 const workoutStore = useWorkoutStore();
+const templateStore = useTemplateStore();
 const authStore = useAuthStore();
 const router = useRouter();
 
@@ -34,26 +36,41 @@ onMounted(async () => {
   }
 });
 
-const addToWorkout = (exercise) => {
-  if (!workoutStore.workoutActive) {
+const addExercise = (exercise) => {
+  if (!templateStore.templateActive && !workoutStore.workoutActive) {
     alert(
-      "Cannot add exercise, there is currently no active workout in progress."
+      "Cannot add exercise, there is currently no workout or template creation in progress."
     );
     return;
   }
 
-  if (isExerciseAdded(exercise)) {
-    workoutStore.removeExercise(exercise.id);
+  //check if template or workout is active
+  if (templateStore.templateActive) {
+    if (isExerciseAdded(exercise)) {
+      templateStore.removeExercise(exercise.id);
+    } else {
+      templateStore.addExercise(exercise);
+    }
   } else {
-    workoutStore.addExercise(exercise);
+    if (isExerciseAdded(exercise)) {
+      workoutStore.removeExercise(exercise.id);
+    } else {
+      workoutStore.addExercise(exercise);
+    }
   }
 };
 
 // Check if an exercise is added to the workout
 const isExerciseAdded = (exercise) => {
-  return workoutStore.selectedExercises.some(
-    (clickedExercise) => clickedExercise.id === exercise.id
-  );
+  if (workoutStore.workoutActive) {
+    return workoutStore.selectedExercises.some(
+      (clickedExercise) => clickedExercise.id === exercise.id
+    );
+  } else if (templateStore.templateActive) {
+    return templateStore.selectedTemplateExercises.some(
+      (clickedExercise) => clickedExercise.id === exercise.id
+    );
+  }
 };
 
 // Filter and toggle logic
@@ -97,7 +114,7 @@ const filteredExercises = computed(() => {
 <template>
   <div v-if="authStore.token">
     <div
-      v-if="!workoutStore.workoutActive"
+      v-if="!templateStore.templateActive && !workoutStore.workoutActive"
       role="alert"
       class="alert alert-error"
     >
@@ -114,7 +131,7 @@ const filteredExercises = computed(() => {
           d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
         />
       </svg>
-      <span>Workout must be in progress to add exercises.</span>
+      <span>Workout or template must be in progress to add exercises.</span>
     </div>
     <RouterLink to="/workout">
       <button
@@ -190,15 +207,28 @@ const filteredExercises = computed(() => {
           </div>
 
           <!-- Toggle icon between plus and check -->
-          <button @click="addToWorkout(exercise)">
-            <PhPlusCircle
-              v-if="!isExerciseAdded(exercise)"
-              :size="36"
-              color="#0c0a09"
-              weight="fill"
-            />
-            <PhCheckCircle v-else :size="36" color="#FD3F3F" weight="fill" />
-          </button>
+          <div v-if="workoutStore.workoutActive">
+            <button @click="addExercise(exercise)">
+              <PhPlusCircle
+                v-if="!isExerciseAdded(exercise)"
+                :size="36"
+                color="#0c0a09"
+                weight="fill"
+              />
+              <PhCheckCircle v-else :size="36" color="#FD3F3F" weight="fill" />
+            </button>
+          </div>
+          <div v-else="templateStore.templateActive">
+            <button @click="addExercise(exercise)">
+              <PhPlusCircle
+                v-if="!isExerciseAdded(exercise)"
+                :size="36"
+                color="#0c0a09"
+                weight="fill"
+              />
+              <PhCheckCircle v-else :size="36" color="#FD3F3F" weight="fill" />
+            </button>
+          </div>
         </div>
       </div>
     </div>

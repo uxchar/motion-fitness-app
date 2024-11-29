@@ -7,12 +7,41 @@ export const useTemplateStore = defineStore("templateStore", {
       JSON.parse(localStorage.getItem("selectedTemplateExercises")) || [],
     templateActive: localStorage.getItem("templateActive") || false,
     dateCreated: localStorage.getItem("dateCreated") || null,
-    name: "",
+    templateName: "",
     note: "",
     templates: [],
     currentTemplate: null,
   }),
   actions: {
+    // Fetch templates
+    getPreviousTemplates() {
+      const authStore = useAuthStore();
+      const url = `${import.meta.env.VITE_API_URL}`;
+
+      const params = {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authStore.token}`,
+        },
+      };
+
+      const fetchTemplates = async () => {
+        try {
+          const response = await fetch(
+            `${url}/templates/${authStore.userId}`,
+            params
+          );
+          const data = await response.json();
+          this.templates = data.templates;
+        } catch (error) {
+          console.error("Error fetching templates:", error);
+        }
+      };
+      fetchTemplates();
+    },
+
     // Load template from local storage
     loadFromLocalStorage() {
       const storedExercises = JSON.parse(
@@ -45,7 +74,9 @@ export const useTemplateStore = defineStore("templateStore", {
       const url = `${import.meta.env.VITE_API_URL}`;
       this.templateActive = false;
       const templateData = {
-        exercises: this.selectedExercises,
+        templateName: this.templateName,
+        note: this.note,
+        exercises: this.selectedTemplateExercises,
         dateCreated: this.dateCreated,
       };
 
@@ -61,14 +92,14 @@ export const useTemplateStore = defineStore("templateStore", {
         .then((response) => response.json())
         .then((data) => {
           console.log("Template data sent to server:", data);
-          this.resetWorkout();
+          this.resetTemplate();
         })
         .catch((error) => {
           console.error("Error sending template data:", error);
         });
     },
 
-    // Add exercise to workout
+    // Add exercise to template
     addExercise(newExercise) {
       const exercise = this.selectedTemplateExercises.find(
         (exercise) => exercise.id === newExercise.id
@@ -125,14 +156,14 @@ export const useTemplateStore = defineStore("templateStore", {
       }
     },
 
-    cancelTemplate() {
-      this.selectedExercises = [];
-      this.name = "";
+    resetTemplate() {
+      this.selectedTemplateExercises = [];
+      this.templateName = "";
       this.note = "";
       this.dateCreated = false;
       this.templateActive = false;
 
-      localStorage.removeItem("selectedExercises");
+      localStorage.removeItem("selectedTemplateExercises");
       localStorage.removeItem("dateCreated");
       localStorage.removeItem("templateActive");
     },

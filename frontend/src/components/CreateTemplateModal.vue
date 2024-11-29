@@ -8,12 +8,14 @@ const templateStore = useTemplateStore();
 
 const closeModal = () => {
   isModalOpen.value = false;
-  templateStore.cancelTemplate();
+  templateStore.resetTemplate();
+  console.log(templateStore.templateActive);
 };
 
 const openModal = () => {
   isModalOpen.value = true;
   templateStore.startTemplate();
+  console.log(templateStore.templateActive);
 };
 
 const saveTemplate = () => {
@@ -137,7 +139,7 @@ const removeExercise = (exercise) => {
         <div>
           <h3 class="text-lg font-semibold mb-4">Exercises</h3>
           <div
-            v-for="exercise in templateStore.selectedExercises"
+            v-for="exercise in templateStore.selectedTemplateExercises"
             :key="exercise.id"
             class="mb-6 border rounded-lg p-4"
           >
