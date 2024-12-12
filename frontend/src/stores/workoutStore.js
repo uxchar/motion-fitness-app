@@ -193,10 +193,6 @@ export const useWorkoutStore = defineStore("workoutStore", {
           options
         );
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
         const data = await response.json();
         console.log("Workout updated successfully", data);
       } catch (error) {

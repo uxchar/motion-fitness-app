@@ -8,7 +8,8 @@ import { useWorkoutStore } from "@/stores/workoutStore";
 
 const workoutStore = useWorkoutStore();
 const authStore = useAuthStore();
-const username = "Chauncey";
+//placeholder username
+const username = "User";
 
 const isModalOpen = ref(false);
 
@@ -26,6 +27,10 @@ const closeModal = () => {
   isModalOpen.value = false;
 };
 
+const deleteWorkout = (workoutId) => {
+  workoutStore.deleteWorkout(workoutId);
+};
+
 onMounted(() => {
   if (authStore.token != null) {
     workoutStore.getPreviousWorkouts();
@@ -35,6 +40,7 @@ onMounted(() => {
 
 <template>
   <div v-if="authStore.token">
+    <!-- will update to username stored in the database soon -->
     <h2 class="text-5xl font-medium mb-10">Hello {{ username }}</h2>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <div>
@@ -79,7 +85,7 @@ onMounted(() => {
               class="dropdown-content menu bg-zinc-900 text-zinc-50 rounded-box w-52 p-2 shadow"
             >
               <li @click="openModal(workout)"><a>Edit</a></li>
-              <li @click="workoutStore.deleteWorkout(workout.workout_id)">
+              <li @click="deleteWorkout(workout.workout_id)">
                 <a>Delete</a>
               </li>
             </ul>

@@ -3,19 +3,14 @@ import { ref } from "vue";
 import { useTemplateStore } from "@/stores/templateStore";
 import { onMounted } from "vue";
 
-const isModalOpen = ref(false);
 const templateStore = useTemplateStore();
 
 const closeModal = () => {
-  isModalOpen.value = false;
-  templateStore.resetTemplate();
-  console.log(templateStore.templateActive);
+  templateStore.closeTemplateModal();
 };
 
 const openModal = () => {
-  isModalOpen.value = true;
-  templateStore.startTemplate();
-  console.log(templateStore.templateActive);
+  templateStore.openTemplateModal();
 };
 
 const saveTemplate = () => {
@@ -74,17 +69,17 @@ const removeExercise = (exercise) => {
       @click="openModal"
       class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 mt-4 rounded-lg"
     >
-      Add New Template
+      Create New Template
     </button>
 
     <!-- Modal overlay -->
     <div
-      v-if="isModalOpen"
+      v-if="templateStore.isTemplateModalOpen"
       class="fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center"
     >
       <!-- Modal content -->
       <div
-        class="bg-white w-full max-w-4xl p-6 rounded-lg shadow-lg relative mx-4 overflow-y-auto max-h-[90vh] z-60"
+        class="bg-white w-full max-w-4xl p-6 rounded-lg shadow-lg relative mx-4 overflow-y-auto max-h-[70vh] z-60"
       >
         <!-- Close button -->
         <button
@@ -118,7 +113,7 @@ const removeExercise = (exercise) => {
             >Template Name</label
           >
           <input
-            v-model="templateStore.name"
+            v-model="templateStore.templateName"
             type="text"
             placeholder="Enter template name"
             class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"

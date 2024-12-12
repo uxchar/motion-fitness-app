@@ -11,8 +11,22 @@ export const useTemplateStore = defineStore("templateStore", {
     note: "",
     templates: [],
     currentTemplate: null,
+    isTemplateModalOpen: false,
   }),
   actions: {
+    openTemplateModal(template = null) {
+      this.isTemplateModalOpen = true;
+      this.templateActive = true;
+      this.startTemplate();
+      // this.currentTemplate = template || { template_name: "", exercises: [] };
+    },
+    closeTemplateModal() {
+      this.currentTemplate = null;
+      this.isTemplateModalOpen = false;
+      this.templateActive = false;
+      this.resetTemplate();
+    },
+
     // Fetch templates
     getPreviousTemplates() {
       const authStore = useAuthStore();
@@ -69,10 +83,10 @@ export const useTemplateStore = defineStore("templateStore", {
     },
 
     // Finish template and send to backend
-    saveTemplate() {
+    async saveTemplate() {
       const authStore = useAuthStore();
       const url = `${import.meta.env.VITE_API_URL}`;
-      this.templateActive = false;
+
       const templateData = {
         templateName: this.templateName,
         note: this.note,
@@ -80,23 +94,30 @@ export const useTemplateStore = defineStore("templateStore", {
         dateCreated: this.dateCreated,
       };
 
-      fetch(`${url}/template/${authStore.userId}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-          Authorization: `Bearer ${authStore.token}`,
-        },
-        body: JSON.stringify(templateData),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log("Template data sent to server:", data);
-          this.resetTemplate();
-        })
-        .catch((error) => {
-          console.error("Error sending template data:", error);
+      try {
+        const response = await fetch(`${url}/template/${authStore.userId}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${authStore.token}`,
+          },
+          body: JSON.stringify(templateData),
         });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        // Get the complete template object from the backend
+        const newTemplate = await response.json();
+
+        // Add the new template to the frontend store
+        this.templates.push(newTemplate);
+        this.resetTemplate();
+        this.getPreviousTemplates();
+      } catch (error) {
+        console.error("Error creating template:", error);
+      }
     },
 
     // Add exercise to template
@@ -152,7 +173,6 @@ export const useTemplateStore = defineStore("templateStore", {
         exercise.sets.forEach((set, index) => {
           set.set_number = index + 1;
         });
-        this.saveToLocalStorage();
       }
     },
 
@@ -167,6 +187,8 @@ export const useTemplateStore = defineStore("templateStore", {
       localStorage.removeItem("dateCreated");
       localStorage.removeItem("templateActive");
     },
+
+    cancelTemplateChanges() {},
 
     // Update a template on the server
     async updateTemplate(updatedTemplate) {
@@ -189,14 +211,10 @@ export const useTemplateStore = defineStore("templateStore", {
           options
         );
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
         const data = await response.json();
-        console.log("Workout updated successfully", data);
+        console.log("Template updated successfully", data);
       } catch (error) {
-        console.error("Error updating workout:", error);
+        console.error("Error updating template:", error);
       }
     },
 
